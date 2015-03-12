@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "description": "atom.io haxe plugin, includes completion, error checking and more.",
   "activationCommands": {},
+  "linter-package": true,
+  "linter-implementation": "linting/linter",
   "providedServices": {
     "haxe-completion.provider": {
       "description": "Provides a haxe completion server, with query interface.",
