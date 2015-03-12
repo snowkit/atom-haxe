@@ -1,13 +1,12 @@
 {
   "name": "atom-haxe",
   "main": "./lib/haxe.js",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "atom.io haxe plugin, includes completion, error checking and more.",
-  "activationCommands": {
-  },
+  "activationCommands": {},
   "providedServices": {
     "haxe-completion.provider": {
-      "description":"Provides a haxe completion server, with query interface.",
+      "description": "Provides a haxe completion server, with query interface.",
       "versions": {
         "1.0.0": "query"
       }
@@ -24,7 +23,7 @@
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
-    "xml2js":"~0.4.5",
-    "fs-extra":"~0.16.5"
+    "xml2js": "~0.4.5",
+    "fs-extra": "~0.16.5"
   }
 }
