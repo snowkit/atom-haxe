@@ -1,0 +1,20 @@
+
+'context-menu':
+  '[data-path$=hxml]': [
+      { label: 'Set as active HXML file', command: 'haxe:set-hxml-file'},
+      { type: 'separator' },
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Haxe'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'haxe:toggle'
+        }
+      ]
+    ]
+  }
+]
