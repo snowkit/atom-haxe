@@ -27,6 +27,7 @@
   "dependencies": {
     "xml2js": "~0.4.5",
     "fs-extra": "~0.16.5",
-    "atom-message-panel": "~1.2.2"
+    "atom-message-panel": "~1.2.2",
+    "temporary": "~0.0.8"
   }
 }
