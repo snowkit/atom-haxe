@@ -41,19 +41,12 @@ atom-overlay {
 atom-text-editor[data-grammar="source haxe"] {
     atom-overlay {
         .linter-list {
-            .linter-name {
-                position: absolute;
-                left: 0px;
-                top: 0px;
-            }
             .linter-content {
-                margin-left: 40px;
-                margin-right: 5px;
+                display: inline-block;
+                max-width: 640px;
+                white-space: normal;
+                vertical-align: top;
             }
-        }
-        .linter-list li {
-            position: relative;
-            min-height: 20px;
         }
     }
 }
