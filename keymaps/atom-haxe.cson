@@ -1,3 +1,6 @@
 
+'.platform-darwin atom-workspace':
+  'cmd-b': 'haxe:build'
+
 'atom-workspace':
-  'ctrl-alt-o': 'haxe:toggle'
+  'ctrl-b': 'haxe:build'
