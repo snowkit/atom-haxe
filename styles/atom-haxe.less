@@ -52,27 +52,33 @@ atom-text-editor[data-grammar="source haxe"] {
 }
 
 // Type-hinting suggestion
-atom-text-editor {
-    .haxe-autocomplete-suggestion-type-hint {
-        background-color: transparent !important;
-        margin: 0 !important;
-        padding: 0 !important;
+atom-text-editor[data-grammar="source haxe"] {
+    atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list.select-list.popover-list {
+        .haxe-autocomplete-suggestion-type-hint {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
 
-        .word {
-            display: none;
-        }
+            .selected {
+                background-color: transparent;
+            }
 
-        .completion-label {
-            float: left !important;
-            font-size: 12px !important;
-            width: 100% !important;
-            text-align: center !important;
-            margin: 0 !important;
-            padding: 0 5px !important;
+            .word {
+                display: none;
+            }
 
-            .current-argument {
-                font-weight: bold !important;
-                color: white !important;
+            .completion-label {
+                float: left;
+                font-size: 12px;
+                width: 100%;
+                text-align: center;
+                margin: 0;
+                padding: 0 5px;
+
+                .current-argument {
+                    font-weight: bold;
+                    color: white;
+                }
             }
         }
     }
