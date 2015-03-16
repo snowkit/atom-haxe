@@ -11,8 +11,21 @@
       'label': 'Haxe'
       'submenu': [
         {
-          'label': 'Toggle'
-          'command': 'haxe:toggle'
+          'label': 'Start/Reset completion server'
+          'command': 'haxe:reset-server'
+        },
+        {
+          'label': 'Stop completion server'
+          'command': 'haxe:stop-server'
+        },
+        { type: 'separator' },
+        {
+          'label': 'Toggle completion debug'
+          'command': 'haxe:toggle-completion-debug'
+        },
+        {
+          'label': 'Toggle log view'
+          'command': 'haxe:toggle-log-view'
         }
       ]
     ]
