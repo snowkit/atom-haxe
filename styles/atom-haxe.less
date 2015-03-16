@@ -50,3 +50,30 @@ atom-text-editor[data-grammar="source haxe"] {
         }
     }
 }
+
+// Type-hinting suggestion
+atom-text-editor {
+    .haxe-autocomplete-suggestion-type-hint {
+        background-color: transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
+
+        .word {
+            display: none;
+        }
+
+        .completion-label {
+            float: left !important;
+            font-size: 12px !important;
+            width: 100% !important;
+            text-align: center !important;
+            margin: 0 !important;
+            padding: 0 5px !important;
+
+            .current-argument {
+                font-weight: bold !important;
+                color: white !important;
+            }
+        }
+    }
+}
