@@ -21,6 +21,8 @@ _usable: done but being polished/tested._
 _future: not started yet_
 _done: completed and polished_
 
+![img](http://i.imgur.com/rZMbs21.gifv)
+
 ## Usage
 
 This usage applies only if using hxml only build workflow.
