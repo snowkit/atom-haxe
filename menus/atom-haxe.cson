@@ -11,6 +11,11 @@
       'label': 'Haxe'
       'submenu': [
         {
+          'label': 'Clear active project info'
+          'command': 'haxe:clear-project'
+        },
+        { type: 'separator' },
+        {
           'label': 'Start/Reset completion server'
           'command': 'haxe:reset-server'
         },
