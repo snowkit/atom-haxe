@@ -1,7 +1,7 @@
 {
   "name": "haxe",
   "main": "./lib/haxe.js",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "atom.io haxe plugin, includes completion, error checking and more.",
   "activationCommands": {},
   "linter-package": true,
