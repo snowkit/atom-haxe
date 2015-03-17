@@ -27,7 +27,7 @@ _done: completed and polished_
 Install these from atom Settings -> Install
 
 - requires `language-haxe` package
-- requires `linting` package
+- requires `linter` package
 - requires `automcomplete-plus` package
 
 ## Usage
