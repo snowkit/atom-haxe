@@ -23,6 +23,12 @@ _done: completed and polished_
 
 ![img](http://i.imgur.com/rZMbs21.gif)
 
+## Requirements
+Install these from atom Settings -> Install
+
+- requires `language-haxe` package
+- requires `linting` package
+
 ## Usage
 
 This usage applies only if using hxml only build workflow.
