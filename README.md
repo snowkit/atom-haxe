@@ -21,7 +21,7 @@ _usable: done but being polished/tested._
 _future: not started yet_
 _done: completed and polished_
 
-![img](http://i.imgur.com/rZMbs21.gifv)
+![img](http://i.imgur.com/rZMbs21.gif)
 
 ## Usage
 
