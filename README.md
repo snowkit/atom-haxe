@@ -10,30 +10,20 @@ Thanks!
 ## Goals
 
 - Provide a definitive plugin for all Haxe features
-    - code error linting (_usable_)
-    - code completion (_usable_)
-    - hxml build workflow (_usable_)
-    - api doc integration (_future_)
-    - code / doc hinting (_future_)
-- No library/framework specifics and no bloat
-
-_usable: done but being polished/tested._
-_future: not started yet_
-_done: completed and polished_
-
-![img](http://i.imgur.com/rZMbs21.gif)
+- No library/framework specific code but
+- Flexible to libraries/frameworks (offering completion + build provider)
 
 ## Requirements
 Install these from atom Settings -> Install
 
-- requires `language-haxe` package
 - requires `linter` package
+- requires `language-haxe` package
 - requires `automcomplete-plus` package
 
 ## Usage
 
 This usage applies only if using hxml only build workflow.
-If you are using a package that handles this for you (like `flow`) then
+If you are using a package that handles this for you (like [flow](https://github.com/snowkit/atom-flow/)) then
 this does not apply, and you should read the documentation for that package.
 
 - Right click a HXML file in the tree view
@@ -43,10 +33,35 @@ This will activate the hxml file, and use it for completion + builds.
 You can unset the project state from the Packages -> Haxe menu.
 
 **completion**
-Completion happens as you type, including in function arguments and even typedefs.
+Completion happens as you type.
+For now, you might add "dot files" to Settings -> ignored Names,
+For example adding `.*` would ignore the .tmp file generated for
+completion. We are working on a more flexible solution.
+
 
 **linting**
-Linting happens when you save the file currently.
+Linting only happens when you save the file.
+
+## Issues / feedback
+
+Please file issues at https://github.com/snowkit/atom-haxe !
+
+## Features
+
+#### code completion
+![completion](http://i.imgur.com/OzN25ii.gif)
+![typedefcompletion](http://i.imgur.com/7kDqcID.gif)
+
+#### code linting
+![linting](http://i.imgur.com/okGD6Ue.gif)
+
+#### build workflow
+![building](http://i.imgur.com/3Ldo6hJ.gif)
+
+
+**future features**
+
+- code / doc hinting
 
 ## Troubleshooting
 
