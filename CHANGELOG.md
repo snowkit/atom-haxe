@@ -1,4 +1,30 @@
-## 0.4.0 - Dev
+## 0.6.0 - Dev
+
+
+## 0.5.0
+
+* ensure completion is more stable with autocomplete-plus `2.6.0`
+* many fixes in type parsing and display
+* many fixes in experimental tmp file option
+* fix byte offset with unicode
+* lint shares code completion cache
+* refactor for separating the future shared code
+
+## 0.4.0 ~ 0.4.3
+
+* add all dependencies to dependency check
+* show more info on type hints
+* more robust completion state detection
+* add consumer build workflow
+* fix bugs about tree view assumptions
+* implement build system
+* added unset project option
+* make menus useful
+* fix bug in hxml formatting
+* completion improvements (filter suggestions, type hints, etc)
+* port type parsing to new package
+* linting fixes
+
 
 ## 0.3.0
 
