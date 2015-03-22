@@ -29,7 +29,6 @@
     "fs-extra": "~0.16.5",
     "atom-message-panel": "~1.2.2",
     "temporary": "~0.0.8",
-    "fuzzaldrin": "~2.1.0",
-    "glob": "5.0.3"
+    "fuzzaldrin": "~2.1.0"
   }
 }
