@@ -1,5 +1,17 @@
-## 0.6.0 - Dev
+## 0.7.0 - Dev
 
+
+## 0.6.0
+
+* Update readme requirements to mention Haxe requirement
+* Add initial go to definition (requires haxe 3.2.0+)
+* Add initial top level completion (requires haxe 3.2.0+)
+* fix line-comment command putting `/* */` instead of `//`
+* fixes to tmp_path experimental option
+
+## 0.5.1~0.5.3
+
+* minor clean ups
 
 ## 0.5.0
 
