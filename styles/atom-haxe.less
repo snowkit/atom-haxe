@@ -62,25 +62,28 @@ atom-text-editor[data-grammar="source haxe"] {
 // or Error as suggestion
 atom-text-editor[data-grammar="source haxe"] {
     atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list.select-list.popover-list {
-        .haxe-autocomplete-suggestion-type-hint, .haxe-autocomplete-suggestion-error {
+        .haxe-autocomplete-suggestion-type-hint,
+        .haxe-autocomplete-suggestion-type-hint.selected,
+        .haxe-autocomplete-suggestion-error,
+        .haxe-autocomplete-suggestion-error.selected {
             background-color: transparent;
             margin: 0;
             padding: 0;
-
-            .selected {
-                background-color: transparent;
-            }
 
             .word {
                 display: none;
             }
 
-            .completion-label {
+            .selected {
+                background-color: transparent;
+            }
+
+            .completion-label, .right-label {
                 float: left;
                 font-size: 12px;
                 width: 100%;
                 text-align: center;
-                margin: 0;
+                margin: 2px 0;
                 padding: 0 5px;
 
                 .current-argument {
@@ -90,7 +93,7 @@ atom-text-editor[data-grammar="source haxe"] {
             }
         }
 
-        .haxe-autocomplete-suggestion-error .completion-label {
+        .haxe-autocomplete-suggestion-error .completion-label, .haxe-autocomplete-suggestion-error .right-label {
             color: #c40000;
         }
     }
