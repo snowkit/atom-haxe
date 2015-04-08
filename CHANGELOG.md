@@ -1,6 +1,13 @@
 ## 0.7.0 - Dev
 
 
+## 0.6.1
+
+* tidy up logging from build consumers, and so on to debug logging system/flag
+* hxml state parsing handles spaces and parses more smartly to avoid problems from macro calls etc
+* completion: various parsing improvements
+* go to definition : various improvements and additions
+
 ## 0.6.0
 
 * Update readme requirements to mention Haxe requirement
