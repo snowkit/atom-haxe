@@ -58,6 +58,13 @@ atom-text-editor[data-grammar="source haxe"] {
     }
 }
 
+// Fixing up truncated right label
+atom-text-editor[data-grammar="source haxe"] {
+    atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list .right-label {
+        max-width: none;
+    }
+}
+
 // Type-hinting suggestion
 // or Error as suggestion
 atom-text-editor[data-grammar="source haxe"] {
