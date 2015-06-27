@@ -14,6 +14,14 @@ Thanks!
 - Flexible to libraries/frameworks (offering completion + build provider)
 
 ## Requirements
+
+**Haxe** is required, and can be installed from http://haxe.org
+
+By default, the plugin will use the `haxe` executable from your path/environment,
+this can be configured in the settings, but is not usually required.
+
+**Required Atom Packages**
+
 Install these from atom Settings -> Install
 
 - requires `linter` package
