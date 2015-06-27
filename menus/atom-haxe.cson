@@ -4,6 +4,10 @@
       { label: 'Set as active HXML file', command: 'haxe:set-hxml-file'},
       { type: 'separator' },
   ]
+  '[data-path$=xml]': [
+      { label: 'Set as active XML file', command: 'haxe:set-xml-file'},
+      { type: 'separator' },
+  ]
 'menu': [
   {
     'label': 'Packages'
