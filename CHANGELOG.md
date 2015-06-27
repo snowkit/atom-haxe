@@ -1,5 +1,12 @@
-## 0.7.0 - Dev
+## 0.9.0 - Dev
 
+* Working on shared haxe code implementation (see readme Future Plans)
+
+## 0.8.0
+
+* completion; Fix truncated type hint and return type on newer autocomplete-plus version
+* completion; Exclude haxe completion providers with priority lower than 2 instead of 1
+* NOTE: The version bump from 0.6.2 => 0.8.0 was an error, trying to correct it created unavailable downloads from the atom API so it was pushed up one to continue working.
 
 ## 0.6.1
 
