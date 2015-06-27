@@ -2,6 +2,11 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.1
+
+* Add SERVICES.md documentation
+* Update changelogs
+
 ## 0.8.0
 
 * completion; Fix truncated type hint and return type on newer autocomplete-plus version
