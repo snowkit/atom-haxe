@@ -2,6 +2,11 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.2
+
+* Fix linter deprecations `#32`
+* Implement project wide linting from new Linter API
+
 ## 0.8.1
 
 * Add SERVICES.md documentation
