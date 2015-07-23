@@ -1,7 +1,7 @@
 {
   "name": "haxe",
   "main": "./lib/haxe.js",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "atom.io haxe plugin, includes completion, error checking and more.",
   "activationCommands": {},
   "providedServices": {
@@ -17,9 +17,9 @@
       }
     },
     "linter": {
-        "versions": {
-            "1.0.0": "provide_linter"
-        }
+      "versions": {
+        "1.0.0": "provide_linter"
+      }
     }
   },
   "repository": "https://github.com/snowkit/atom-haxe",
