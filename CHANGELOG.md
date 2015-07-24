@@ -2,6 +2,11 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.3
+
+* Fix empty buffer causing errors `#33`
+* Ensure custom haxe path is used `#37` and logged
+
 ## 0.8.2
 
 * Fix linter deprecations `#32`
