@@ -2,6 +2,10 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.4
+
+* Fix linter handling of multiline errors
+
 ## 0.8.3
 
 * Fix empty buffer causing errors `#33`
