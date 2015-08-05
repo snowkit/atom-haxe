@@ -2,6 +2,11 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.5
+
+* Improve code completion: disable it in various unexpected cases (fixes `#38`)
+* Ensure type hints are compatible with the latest autocomplete-plus package (version `2.19.0`)
+
 ## 0.8.4
 
 * Fix linter handling of multiline errors
