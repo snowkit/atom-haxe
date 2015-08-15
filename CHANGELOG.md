@@ -2,6 +2,11 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.6
+
+* Fix context menus not working with Atom 1.0.7
+* Add context menu to hxml files as well
+
 ## 0.8.5
 
 * Improve code completion: disable it in various unexpected cases (fixes `#38`)
