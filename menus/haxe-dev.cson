@@ -1,0 +1,22 @@
+# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle haxe-dev'
+      'command': 'haxe-dev:toggle'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'haxe-dev'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'haxe-dev:toggle'
+        }
+      ]
+    ]
+  }
+]

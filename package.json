@@ -1,0 +1,18 @@
+{
+  "name": "haxe-dev",
+  "main": "./lib/haxe-dev",
+  "version": "0.0.0",
+  "description": "Haxe plugin for Atom with experimental features, written in Haxe",
+  "keywords": [
+  ],
+  "activationCommands": {
+    "atom-workspace": "haxe-dev:toggle"
+  },
+  "repository": "https://github.com/jeremyfa/atom-haxe-dev",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}
