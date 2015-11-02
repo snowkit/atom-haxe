@@ -2,6 +2,10 @@
 
 Haxe plugin for Atom with experimental features, written in Haxe
 
-## Install
+## How to install
 
-Clone the git repository then run inside the directory: ``apm link .``
+```
+git clone https://github.com/jeremyfa/atom-haxe-dev.git
+cd atom-haxe-dev
+apm link .
+```
