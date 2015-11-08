@@ -40,7 +40,7 @@ class ChildProcess {
 
     private var ready:Bool = false;
 
-    private var destroyed:Bool = false;
+    private var killed:Bool = false;
 
     public function new() {
         start_proc();
@@ -60,8 +60,8 @@ class ChildProcess {
         proc.send({kind: MESSAGE, data: message});
     }
 
-    public function destroy() {
-        destroyed = true;
+    public function kill() {
+        killed = true;
         if (proc == null) return;
         try {
             proc.kill('SIGTERM');
@@ -132,7 +132,7 @@ class ChildProcess {
             Log.error(data);
         });
         proc.on('close', function(code) {
-            if (destroyed) return;
+            if (killed) return;
 
                 // Handle process dropping
             if (code == EXIT_ORPHAN) {

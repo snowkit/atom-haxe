@@ -27,10 +27,14 @@ class WorkerTask<P,R> {
 
     @:allow(utils.Worker)
     private function internal_run(resolve:WorkerTask<P,R>->Void, reject:Dynamic->Void):Void {
-        run(function(r) {
-            result = r;
-            resolve(this);
-        }, reject);
+        try {
+            run(function(r) {
+                result = r;
+                resolve(this);
+            }, reject);
+        } catch (e:Dynamic) {
+            reject(e);
+        }
     }
 
     private function run(resolve:R->Void, reject:Dynamic->Void):Void {}

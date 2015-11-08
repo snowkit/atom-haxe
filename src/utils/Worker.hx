@@ -1,7 +1,6 @@
 package utils;
 
-import promhx.Promise;
-import promhx.Deferred;
+import utils.Promise;
 
 import haxe.Serializer;
 import haxe.Unserializer;
@@ -99,33 +98,31 @@ class Worker {
      Run the given task on the worker.
      */
     public function run_task<P,R>(task:WorkerTask<P,R>):Promise<WorkerTask<P,R>> {
-        var deferred = new Deferred<WorkerTask<P,R>>();
-        var promise = new Promise<WorkerTask<P,R>>(deferred);
+        return new Promise<WorkerTask<P,R>>(function(resolve, reject) {
 
-        if (process_kind == CHILD) {
-                // Prepare from receiving response
-            await_task_response(task.id, deferred.resolve, promise.reject);
-                // Run task in child process
-            var serializer = new Serializer();
-            serializer.serialize(RUN_TASK);
-            serializer.serialize(task);
-            child_process.post_message(serializer.toString());
-        }
-        else if (process_kind == PARENT) {
-                // Prepare from receiving response
-            await_task_response(task.id, deferred.resolve, promise.reject);
-                // Run task in parent process
-            var serializer = new Serializer();
-            serializer.serialize(RUN_TASK);
-            serializer.serialize(task);
-            ParentProcess.post_message(serializer.toString());
-        }
-        else { //process_kind == CurrentProcess
-                // Run task
-            task.internal_run(deferred.resolve, promise.reject);
-        }
-
-        return promise;
+            if (process_kind == CHILD) {
+                    // Prepare from receiving response
+                await_task_response(task.id, resolve, reject);
+                    // Run task in child process
+                var serializer = new Serializer();
+                serializer.serialize(RUN_TASK);
+                serializer.serialize(task);
+                child_process.post_message(serializer.toString());
+            }
+            else if (process_kind == PARENT) {
+                    // Prepare from receiving response
+                await_task_response(task.id, resolve, reject);
+                    // Run task in parent process
+                var serializer = new Serializer();
+                serializer.serialize(RUN_TASK);
+                serializer.serialize(task);
+                ParentProcess.post_message(serializer.toString());
+            }
+            else { //process_kind == CurrentProcess
+                    // Run task
+                task.internal_run(resolve, reject);
+            }
+        });
     }
 
     /**
@@ -134,7 +131,7 @@ class Worker {
     public function destroy() {
             // Destroy child process if needed
         if (child_process != null) {
-            child_process.destroy();
+            child_process.kill();
             child_process = null;
         }
     }
@@ -164,7 +161,7 @@ class Worker {
                     child_process.post_message(serializer.toString());
                 }
 
-            }).catchError(function(error) {
+            }).error(function(error) {
                     // Reject
                 var serializer = new Serializer();
                 serializer.serialize(TASK_REJECT);

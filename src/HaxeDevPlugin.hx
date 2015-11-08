@@ -29,8 +29,6 @@ class HaxeDevPlugin {
         module.exports = cast HaxeDevPlugin;
             // Init state
         State.init();
-            // Run Hello task in background
-        State.child_worker.run_task(new tasks.HelloTask({name: "Jérémy"}));
     }
 
     public static function activate(state:Dynamic):Void {
