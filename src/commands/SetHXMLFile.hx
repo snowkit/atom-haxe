@@ -1,6 +1,6 @@
-package tasks;
+package commands;
 
-import utils.WorkerTask;
+import utils.Command;
 import utils.HxmlUtils;
 
 import platform.Log;
@@ -11,9 +11,9 @@ typedef SetHXMLFileParams = {
     var path:String;
 }
 
-class SetHXMLFile extends WorkerTask<SetHXMLFileParams,Bool> {
+class SetHXMLFile extends Command<SetHXMLFileParams,Bool> {
 
-    override function run(resolve:Bool->Void, reject:Dynamic->Void) {
+    override function execute(resolve:Bool->Void, reject:Dynamic->Void) {
 
         Log.debug('Set HXML File to ' + params.path);
 

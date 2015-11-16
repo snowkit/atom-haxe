@@ -7,8 +7,8 @@ import platform.Exec;
 
 import utils.Promise;
 
-import tasks.SetHXMLFile;
-import tasks.SynchronizeState;
+import commands.SetHXMLFile;
+import commands.SynchronizeState;
 
 // Extend either background or main state while
 // still manipulating a similar "State"
@@ -66,9 +66,9 @@ class State extends BaseState {
             // rather keep the other main process values on the main state and vice versa)
         var values:Dynamic = {};
         values.hxml_data = hxml_data;
-            // Run the worker task to serialize and
+            // Run the command to serialize and
             // assign values on the other worker's state
-        other_worker.run_task(new SynchronizeState({values: values}));
+        other_worker.run_command(new SynchronizeState({values: values}));
     }
 
     /**

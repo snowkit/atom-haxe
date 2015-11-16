@@ -6,7 +6,7 @@ import state.State;
 
 import utils.HaxeParsingUtils;
 import utils.Worker;
-import utils.WorkerTask;
+import utils.Command;
 
 import platform.Log;
 

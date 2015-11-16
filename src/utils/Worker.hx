@@ -14,7 +14,7 @@ typedef WorkerOptions = {
     @:optional var current_worker:Worker;
 }
 
-typedef WorkerTaskCallbacks = {
+typedef CommandCallbacks = {
     var resolve:Dynamic->Void;
     var reject:Dynamic->Void;
 }
@@ -26,9 +26,9 @@ typedef WorkerTaskCallbacks = {
 }
 
 @:enum abstract ProcessMessageKind (Int) {
-    var TASK_RESOLVE = 0;
-    var TASK_REJECT = 1;
-    var RUN_TASK = 2;
+    var COMMAND_RESOLVE = 0;
+    var COMMAND_REJECT = 1;
+    var RUN_COMMAND = 2;
 }
 
 /**
@@ -57,7 +57,7 @@ class Worker {
 
     private var child_process:ChildProcess;
 
-    private var awaiting_task_callbacks:Map<Int,WorkerTaskCallbacks> = new Map<Int,WorkerTaskCallbacks>();
+    private var awaiting_command_callbacks:Map<Int,CommandCallbacks> = new Map<Int,CommandCallbacks>();
 
     private var main_worker:Worker;
 
@@ -97,30 +97,30 @@ class Worker {
     /**
      Run the given task on the worker.
      */
-    public function run_task<P,R>(task:WorkerTask<P,R>):Promise<WorkerTask<P,R>> {
-        return new Promise<WorkerTask<P,R>>(function(resolve, reject) {
+    public function run_command<P,R>(command:Command<P,R>):Promise<Command<P,R>> {
+        return new Promise<Command<P,R>>(function(resolve, reject) {
 
             if (process_kind == CHILD) {
                     // Prepare from receiving response
-                await_task_response(task.id, resolve, reject);
-                    // Run task in child process
+                await_command_response(command.id, resolve, reject);
+                    // Run command in child process
                 var serializer = new Serializer();
-                serializer.serialize(RUN_TASK);
-                serializer.serialize(task);
+                serializer.serialize(RUN_COMMAND);
+                serializer.serialize(command);
                 child_process.post_message(serializer.toString());
             }
             else if (process_kind == PARENT) {
                     // Prepare from receiving response
-                await_task_response(task.id, resolve, reject);
-                    // Run task in parent process
+                await_command_response(command.id, resolve, reject);
+                    // Run command in parent process
                 var serializer = new Serializer();
-                serializer.serialize(RUN_TASK);
-                serializer.serialize(task);
+                serializer.serialize(RUN_COMMAND);
+                serializer.serialize(command);
                 ParentProcess.post_message(serializer.toString());
             }
             else { //process_kind == CurrentProcess
                     // Run task
-                task.internal_run(resolve, reject);
+                command.internal_execute(resolve, reject);
             }
         });
     }
@@ -136,25 +136,25 @@ class Worker {
         }
     }
 
-    private function await_task_response(task_id, resolve:Dynamic->Void, reject:Dynamic->Void):Void {
-            // Keep track of task id and callbacks until we get
+    private function await_command_response(command_id, resolve:Dynamic->Void, reject:Dynamic->Void):Void {
+            // Keep track of command id and callbacks until we get
             // news from the parent/child related process
-        awaiting_task_callbacks.set(task_id, {resolve: resolve, reject: reject});
+        awaiting_command_callbacks.set(command_id, {resolve: resolve, reject: reject});
     }
 
     private function on_process_message(message:String):Void {
         var unserializer = new Unserializer(message);
         var message_kind:ProcessMessageKind = unserializer.unserialize();
 
-            // Run task requested by parent process
-        if (message_kind == RUN_TASK) {
-            var task:WorkerTask<Dynamic,Dynamic> = unserializer.unserialize();
+            // Run command requested by parent process
+        if (message_kind == RUN_COMMAND) {
+            var command:Command<Dynamic,Dynamic> = unserializer.unserialize();
 
-            main_worker.run_task(task).then(function(result) {
+            main_worker.run_command(command).then(function(result) {
                     // Resolve
                 var serializer = new Serializer();
-                serializer.serialize(TASK_RESOLVE);
-                serializer.serialize(task);
+                serializer.serialize(COMMAND_RESOLVE);
+                serializer.serialize(command);
                 if (process_kind == PARENT) {
                     ParentProcess.post_message(serializer.toString());
                 } else if (process_kind == CHILD) {
@@ -164,8 +164,8 @@ class Worker {
             }).error(function(error) {
                     // Reject
                 var serializer = new Serializer();
-                serializer.serialize(TASK_REJECT);
-                serializer.serialize(task);
+                serializer.serialize(COMMAND_REJECT);
+                serializer.serialize(command);
                 serializer.serialize(error);
                 if (process_kind == PARENT) {
                     ParentProcess.post_message(serializer.toString());
@@ -174,28 +174,28 @@ class Worker {
                 }
             });
         }
-            // Resolve task
-        else if (message_kind == TASK_RESOLVE) {
-            var task = unserializer.unserialize();
+            // Resolve command
+        else if (message_kind == COMMAND_RESOLVE) {
+            var command = unserializer.unserialize();
 
-            if (!awaiting_task_callbacks.exists(task.id)) {
-                throw "Cannot resolve task "+task+" because it is not running.";
+            if (!awaiting_command_callbacks.exists(command.id)) {
+                throw "Cannot resolve command "+command+" because it is not running.";
             }
 
-            var callbacks = awaiting_task_callbacks.get(task.id);
-            awaiting_task_callbacks.remove(task.id);
-            callbacks.resolve(task);
+            var callbacks = awaiting_command_callbacks.get(command.id);
+            awaiting_command_callbacks.remove(command.id);
+            callbacks.resolve(command);
         }
-            // Reject task
-        else if (message_kind == TASK_REJECT) {
-            var task = unserializer.unserialize();
+            // Reject command
+        else if (message_kind == COMMAND_REJECT) {
+            var command = unserializer.unserialize();
 
-            if (!awaiting_task_callbacks.exists(task.id)) {
-                throw "Cannot reject task "+task+" because it is not running.";
+            if (!awaiting_command_callbacks.exists(command.id)) {
+                throw "Cannot reject command "+command+" because it is not running.";
             }
 
-            var callbacks = awaiting_task_callbacks.get(task.id);
-            awaiting_task_callbacks.remove(task.id);
+            var callbacks = awaiting_command_callbacks.get(command.id);
+            awaiting_command_callbacks.remove(command.id);
             var error = unserializer.unserialize();
             callbacks.reject(error);
         }

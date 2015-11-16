@@ -1,15 +1,15 @@
-package tasks;
+package commands;
 
-import utils.WorkerTask;
+import utils.Command;
 import state.State;
 
 typedef SynchronizeStateParams = {
     var values: Dynamic;
 }
 
-class SynchronizeState extends WorkerTask<SynchronizeStateParams,Bool> {
+class SynchronizeState extends Command<SynchronizeStateParams,Bool> {
 
-    override function run(resolve:Bool->Void, reject:Dynamic->Void) {
+    override function execute(resolve:Bool->Void, reject:Dynamic->Void) {
             // Assign received values
         @:privateAccess
         State.assign_values(params.values);
