@@ -1,0 +1,8 @@
+-lib hxnodejs
+-lib promhx
+-main HaxeDevMain
+-js ../lib/haxe-dev-main.js
+-cp ../externs
+-D atom
+-debug
+-cmd haxe atom-background.hxml

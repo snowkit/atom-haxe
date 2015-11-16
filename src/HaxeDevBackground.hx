@@ -7,7 +7,7 @@ import state.State;
  This is the entry point to execute code in background
  without blocking the UI thread.
  */
-class HaxeDevWorker {
+class HaxeDevBackground {
 
     private static var process:js.node.Process = untyped __js__('process');
 

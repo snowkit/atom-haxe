@@ -1,8 +1,0 @@
--lib hxnodejs
--lib promhx
--main HaxeDevWorker
--js ../lib/haxe-dev-worker.js
--cp ../externs
--D atom
--D worker
--debug

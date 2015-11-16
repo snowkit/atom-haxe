@@ -4,6 +4,8 @@ import utils.Promise;
 
 import js.node.ChildProcess;
 
+import js.Node.process;
+
 typedef ExecResult = {
     var out: String;
     var err: String;
@@ -19,12 +21,10 @@ typedef ExecOptions = {
  */
 class Exec {
 
-    /**
-     Runs a command with args, returning a promise that will resolve with {out, err, code}
-     The promise does not reject.
-     Pass the ondataout and ondataerr handlers to get incremental changes
-     (this doesn't change the above behavior)
-     */
+        /** Runs a shell command with args, returning a promise that will resolve with {out, err, code}
+            The promise does not reject.
+            Pass the ondataout and ondataerr handlers to get incremental changes
+            (this doesn't change the above behavior) */
     public static function run(cmd:String, args:Array<String>, ?options:ExecOptions, ?ondataout:String->Void, ?ondataerr:String->Void):Promise<ExecResult> {
 
         return new Promise<ExecResult>(function(resolve, reject) {
@@ -34,6 +34,22 @@ class Exec {
             var spawn_options:Dynamic = {cwd: untyped process.cwd()};
             if (options != null) {
                 if (options.cwd != null) spawn_options.cwd = options.cwd;
+            }
+
+                // Depending on the OS, run cmd through bash command
+            if (process.platform == 'darwin') {
+                    // Use a login shell on OSX, otherwise the users expected env vars won't be setup
+                var prev_cmd = cmd;
+                cmd = '/bin/bash';
+                args = ['-l', '-c'].concat(args);
+            }
+            else if (process.platform == 'linux') {
+                    // Explicitly use /bin/bash on Linux, to keep Linux and OSX as
+                    // similar as possible. A login shell is explicitly not used for
+                    // linux, as it's not required
+                var prev_cmd = cmd;
+                cmd = '/bin/bash';
+                args = ['-c'].concat(args);
             }
 
                 // Spawn process

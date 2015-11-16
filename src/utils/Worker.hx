@@ -11,7 +11,7 @@ import platform.ParentProcess;
 
 typedef WorkerOptions = {
     var process_kind:WorkerProcessKind;
-    @:optional var main_worker:Worker;
+    @:optional var current_worker:Worker;
 }
 
 typedef WorkerTaskCallbacks = {
@@ -20,7 +20,7 @@ typedef WorkerTaskCallbacks = {
 }
 
 @:enum abstract WorkerProcessKind(Int) {
-    var MAIN = 0;
+    var CURRENT = 0;
     var CHILD = 1;
     var PARENT = 2;
 }
@@ -35,7 +35,7 @@ typedef WorkerTaskCallbacks = {
  Higher level abstraction to run tasks.
  Takes care of serializing/unserializing tasks to send them across
  different processes. This provides an easy way to run code either
- on background or ui process/thread.
+ on background or main process/thread.
  */
 class Worker {
 
@@ -69,17 +69,17 @@ class Worker {
         workers_by_id.set(id, this);
 
             // Keep track of main worker if given
-        if (process_kind != MAIN) {
-            if (options.main_worker != null) {
-                    // Main worker is used to run task requested
+        if (process_kind != CURRENT) {
+            if (options.current_worker != null) {
+                    // Current worker is used to run task requested
                     // by parent/child process
-                main_worker = options.main_worker;
+                main_worker = options.current_worker;
             } else {
-                throw "Option `main_worker` is required on workers of kind CHILD or PARENT";
+                throw "Option `current_worker` is required on workers of kind CHILD or PARENT";
             }
         } else {
-            if (options.main_worker != null) {
-                throw "Option `main_worker` is forbidden on worker of kind MAIN";
+            if (options.current_worker != null) {
+                throw "Option `current_worker` is forbidden on worker of kind CURRENT";
             }
         }
 

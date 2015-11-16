@@ -7,7 +7,7 @@ import haxe.macro.Expr;
 
 /**
  A WorkerTask is used to encapsulate code that can be run
- on the same or another process with the Worker API.
+ on the same or another process by letting a Worker run it.
  */
 @:autoBuild(utils.WorkerTaskValidator.validate())
 class WorkerTask<P,R> {

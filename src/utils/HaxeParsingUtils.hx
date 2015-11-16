@@ -17,43 +17,40 @@ typedef HaxeParseTypeContext = {
 }
 
 typedef ParsePartialSignatureOptions = {
-    /**
-     If set to true, function declarations will be parsed,
-     instead of parsing function calls
-     */
+        /** If set to true, function declarations will be parsed,
+            instead of parsing function calls */
     @:optional var parse_declaration:Bool;
 }
 
 typedef HaxeParsedSignature = {
-    /**
-     The position of the opening parenthesis starting the function call signature
-     */
+
+        /** The position of the opening parenthesis starting
+            the function call signature */
     var signature_start:Int;
-    /**
-     The number of arguments between the signature start and the current position
-     */
+
+        /** The number of arguments between the signature
+            start and the current position */
     var number_of_args:Int;
-    /**
-     An array of keys, in case the current position is inside an anonymous structure given as argument
-     */
+
+        /** An array of keys, in case the current position
+            is inside an anonymous structure given as argument */
     @:optional var key_path:Array<String>;
-    /**
-     A string of the key being written at the current position if inside an anonymous structure given as argument
-     */
+
+        /** A string of the key being written at the current position
+            if inside an anonymous structure given as argument */
     @:optional var partial_key:String;
-    /**
-     A string of the argument being written at the current position
-     */
+
+        /** A string of the argument being written at the current position */
     @:optional var partial_arg:String;
-    /**
-     An array of keys, containing the keys already being used before the current position
-     */
+
+        /** An array of keys, containing the keys already
+            being used before the current position */
     @:optional var used_keys:Array<String>;
 }
 
 class HaxeParsingUtils {
 
-    /** Match any single/double quoted string */
+        /** Match any single/double quoted string */
     static var REGEX_BEGINS_WITH_STRING:EReg = new EReg('^(?:"(?:[^"\\\\]*(?:\\\\.[^"\\\\]*)*)"|\'(?:[^\']*(?:\'\'[^\']*)*)\')', '');
 
     static var REGEX_ENDS_WITH_BEFORE_CALL_CHAR:EReg = ~/[a-zA-Z0-9_\]\)]\s*$/;
@@ -65,14 +62,12 @@ class HaxeParsingUtils {
     static var REGEX_ENDS_WITH_FUNCTION_DEF:EReg = ~/[^a-zA-Z0-9_]function(?:\s+[a-zA-Z0-9_]+)?(?:<[a-zA-Z0-9_<>, ]+>)?$/;
     static var REGEX_IMPORT:EReg = ~/import\s*([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)(?:\s+(?:in|as)\s+([a-zA-Z0-9_]+))?/g;
 
-    /**
-     Parse a composed haxe type (that can be a whole function signature)
-     and return an object with all the informations walkable recursively (json-friendly)
-     A function type will have an `args` value next to the `type` value
-     while a regular type will only have a `type` value.
-     In case the type is itself named inside another function signature, a `name` value
-     Will be added to it.
-     */
+        /** Parse a composed haxe type (that can be a whole function signature)
+            and return an object with all the informations walkable recursively (json-friendly)
+            A function type will have an `args` value next to the `type` value
+            while a regular type will only have a `type` value.
+            In case the type is itself named inside another function signature, a `name` value
+            Will be added to it. */
     public static function parse_composed_type(raw_composed_type:String, ?ctx:HaxeParseTypeContext):HaxeComposedType {
 
         var info:HaxeComposedType = {};
@@ -234,12 +229,10 @@ class HaxeParsingUtils {
 
     } //parse_composed_type
 
-    /**
-     Parse structure type like {f:Int}
-     Can be nested.
-     Will update ctx.i (index) accordingly to allow
-     a parent method to continue parsing of a bigger string
-     */
+        /** Parse structure type like {f:Int}
+            Can be nested.
+            Will update ctx.i (index) accordingly to allow
+            a parent method to continue parsing of a bigger string */
     public static function parse_structure_type(raw_structure_type:String, ?ctx:HaxeParseTypeContext):HaxeComposedType {
 
         var item = new StringBuf();
@@ -288,10 +281,9 @@ class HaxeParsingUtils {
 
     } //parse_structure_type
 
-    /**
-     Parse haxe type / haxe named argument
-     It will return an object with a `type` value or with both a `type` and `name` values
-     */
+        /** Parse haxe type / haxe named argument
+            It will return an object with a `type` value
+            or with both a `type` and `name` values */
     public static function parse_type(raw_type:String):HaxeComposedType {
 
         var parts = raw_type.split(':');
@@ -315,11 +307,9 @@ class HaxeParsingUtils {
 
     } //parse_type
 
-    /**
-     Get string from parsed haxe type
-     It may be useful to stringify a sub-type (group)
-     of a previously parsed type
-     */
+        /** Get string from parsed haxe type
+            It may be useful to stringify a sub-type (group)
+            of a previously parsed type */
     public static function string_from_parsed_type(parsed_type:HaxeComposedType):String {
 
         if (parsed_type == null) {
@@ -381,12 +371,11 @@ class HaxeParsingUtils {
 
     } //string_from_parsed_type
 
-    /**
-     Try to match a partial function call or declaration from the given
-     text and index position and return info if succeeded or null.
-     Default behavior is to parse function call only. If an options argument is given with a `parse_declaration` key to true,
-     it will instead only accept a signature which is a declaration (like `function foo(a:T, b|)`)
-    */
+        /** Try to match a partial function call or declaration from the given
+            text and index position and return info if succeeded or null.
+            Default behavior is to parse function call only.
+            If an options argument is given with a `parse_declaration` key to true,
+            it will instead only accept a signature which is a declaration (like `function foo(a:T, b|)`) */
     public static function parse_partial_signature(original_text:String, index:Int, ?options:ParsePartialSignatureOptions) {
             // Cleanup text
         var text = code_with_empty_comments_and_strings(original_text.substring(0, index));
@@ -602,14 +591,12 @@ class HaxeParsingUtils {
 
     } //parse_partial_signature
 
-    /**
-     Return the given code after replacing single-line/multiline comments
-     and string contents with white spaces
-     In other words, the output will be the same haxe code, with the same text length
-     but strings will be only composed of spaces and comments completely replaced with spaces
-     Use this method to simplify later parsing of the code and/or make it more efficient
-     where you don't need string and comment contents
-     */
+        /** Return the given code after replacing single-line/multiline comments
+            and string contents with white spaces
+            In other words, the output will be the same haxe code, with the same text length
+            but strings will be only composed of spaces and comments completely replaced with spaces
+            Use this method to simplify later parsing of the code and/or make it more efficient
+            where you don't need string and comment contents */
     public static function code_with_empty_comments_and_strings(input:String):String {
 
         var i = 0;

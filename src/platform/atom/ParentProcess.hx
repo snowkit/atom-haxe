@@ -1,6 +1,9 @@
 package platform.atom;
 
 import js.node.Process;
+
+import js.Node.process;
+
 import haxe.Timer;
 
 import platform.ChildProcess;
@@ -17,8 +20,6 @@ typedef ParentProcessMessage = {
 }
 
 class ParentProcess {
-
-    private static var process:Process = untyped __js__('process');
 
     private static var is_kept_alive:Bool = false;
 

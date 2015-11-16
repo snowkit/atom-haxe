@@ -13,5 +13,8 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
+    "ansi-to-html": "^0.3.0",
+    "atom-message-panel": "^1.2.4",
+    "temporary": "0.0.8"
   }
 }

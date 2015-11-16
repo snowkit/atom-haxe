@@ -3,6 +3,8 @@ package platform.atom;
 import js.node.Process;
 import js.node.ChildProcess as NodeProcess;
 
+import js.Node.process;
+
 import platform.Log;
 
 using StringTools;
@@ -24,11 +26,10 @@ using StringTools;
 typedef ChildProcessMessage = {
     var kind:ChildProcessMessageKind;
     @:optional var data:Dynamic;
+    @:optional var display:Bool;
 }
 
 class ChildProcess {
-
-    private var process:Process = untyped __js__('process');
 
     private var message_handlers:Array<String->Void> = [];
 
@@ -103,11 +104,11 @@ class ChildProcess {
             case LOG_DEBUG:
                 Log.debug(message.data);
             case LOG_INFO:
-                Log.info(message.data);
+                Log.info(message.data, message.display);
             case LOG_WARN:
-                Log.warn(message.data);
+                Log.warn(message.data, message.display);
             case LOG_ERROR:
-                Log.error(message.data);
+                Log.error(message.data, message.display);
             case READY:
                 ready = true;
                     // Send queued messages

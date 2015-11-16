@@ -17,7 +17,7 @@ import atom.CompositeDisposable;
 /**
  Public API exposed to Atom.
  */
-class HaxeDevPlugin {
+class HaxeDevMain {
 
     private static var subscriptions: CompositeDisposable = null;
 
@@ -26,7 +26,7 @@ class HaxeDevPlugin {
         Log.debug('Starting HaxeDev plugin...');
             // We don't use haxe's built-in @:expose() because we want to expose
             // the whole class as a single module (with its own context)
-        module.exports = cast HaxeDevPlugin;
+        module.exports = cast HaxeDevMain;
             // Init state
         State.init();
     }
@@ -49,7 +49,7 @@ class HaxeDevPlugin {
     }
 
     public static function toggle():Void {
-        Log.info('HaxeDev was toggled!');
+        Log.debug('HaxeDev was toggled!');
     }
 
 }
