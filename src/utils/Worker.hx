@@ -95,7 +95,7 @@ class Worker {
     }
 
     /**
-     Run the given task on the worker.
+     Run the given command on the worker.
      */
     public function run_command<P,R>(command:Command<P,R>):Promise<Command<P,R>> {
         return new Promise<Command<P,R>>(function(resolve, reject) {

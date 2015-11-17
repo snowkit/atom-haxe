@@ -25,6 +25,13 @@ class Command<P,R> {
         this.params = params;
     }
 
+        /** Run the command on the current process. */
+    public function run():Promise<Command<P,R>> {
+        return new Promise<Command<P,R>>(function(resolve, reject) {
+            internal_execute(resolve, reject);
+        });
+    }
+
     @:allow(utils.Worker)
     private function internal_execute(resolve:Command<P,R>->Void, reject:Dynamic->Void):Void {
         try {
