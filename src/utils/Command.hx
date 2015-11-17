@@ -20,7 +20,7 @@ class Command<P,R> {
     public var params:P;
     public var result:R;
 
-    public function new(params:P) {
+    public function new(?params:P) {
         this.id = next_id++;
         this.params = params;
     }

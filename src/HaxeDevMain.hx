@@ -38,7 +38,7 @@ class HaxeDevMain {
             // Register command that toggle
         subscriptions.add(Atom.commands.add('atom-workspace', {'haxe-dev:toggle': toggle}));
             // Register command to set hxml file
-        register_command('set-hxml-file', new commands.SetHXMLFileFromTreeView({}));
+        register_command('set-hxml-file', new commands.SetHXMLFileFromTreeView());
     }
 
     public static function deactivate(state:Dynamic):Void {
