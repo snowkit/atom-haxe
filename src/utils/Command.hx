@@ -6,7 +6,7 @@ import haxe.macro.Expr;
 #end
 
 /**
- A WorkerTask is used to encapsulate code that can be run
+ A Command is used to encapsulate code that can be run
  on the same or another process by letting a Worker run it.
  */
 @:autoBuild(utils.CommandValidator.validate())

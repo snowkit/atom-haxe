@@ -1,18 +1,18 @@
 package commands;
 
 import utils.Command;
-import state.State;
+import context.State.state;
 
-typedef SynchronizeStateParams = {
+private typedef Params = {
     var values: Dynamic;
 }
 
-class SynchronizeState extends Command<SynchronizeStateParams,Bool> {
+class SynchronizeState extends Command<Params, Bool> {
 
     override function execute(resolve:Bool->Void, reject:Dynamic->Void) {
             // Assign received values
         @:privateAccess
-        State.assign_values(params.values);
+        state.assign_values(params.values);
 
         resolve(true);
     }

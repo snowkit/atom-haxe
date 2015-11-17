@@ -1,6 +1,5 @@
 
 import platform.Log;
-import state.State;
 
 /**
  Haxe Dev Worker (inside a child process)
@@ -15,7 +14,7 @@ class HaxeDevBackground {
             // Start worker
         Log.debug('Starting HaxeDev worker...');
             // Init state
-        State.init();
+        context.State.init();
     }
 
 }

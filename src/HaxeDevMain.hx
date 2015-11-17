@@ -2,7 +2,7 @@
 import js.Node.module;
 import js.Browser.console;
 
-import state.State;
+import context.State.state;
 
 import utils.HaxeParsingUtils;
 import utils.Worker;
@@ -28,7 +28,7 @@ class HaxeDevMain {
             // the whole class as a single module (with its own context)
         module.exports = cast HaxeDevMain;
             // Init state
-        State.init();
+        context.State.init();
     }
 
     public static function activate(state:Dynamic):Void {
@@ -36,8 +36,9 @@ class HaxeDevMain {
         subscriptions = new CompositeDisposable();
 
             // Register command that toggle
-        Log.debug('Starting HaxeDev worker...');
         subscriptions.add(Atom.commands.add('atom-workspace', {'haxe-dev:toggle': toggle}));
+            // Register command to set hxml file
+        register_command('set-hxml-file', new commands.SetHXMLFileFromTreeView({}));
     }
 
     public static function deactivate(state:Dynamic):Void {
@@ -48,7 +49,16 @@ class HaxeDevMain {
         return {};
     }
 
-    public static function toggle():Void {
+    private static function register_command(name:String, command:Command<Dynamic,Dynamic>, module:String = 'atom-workspace'):Void {
+
+
+        subscriptions.add(Atom.commands.add(name, module + ':' + name, function(opts:Dynamic):Dynamic {
+            state.main_worker.run_command(command);
+            return null;
+        }));
+    }
+
+    private static function toggle():Void {
         Log.debug('HaxeDev was toggled!');
     }
 
