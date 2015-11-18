@@ -2,6 +2,10 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.9
+
+* Minor fixes for El Capitan path fix
+
 ## 0.8.8
 
 * Fix El Capitan default PATH for the immediate term
