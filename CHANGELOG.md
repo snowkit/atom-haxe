@@ -2,6 +2,11 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.8
+
+* Fix El Capitan default PATH for the immediate term
+* Completion fixes and tweaks to display 
+
 ## 0.8.7
 
 * Fix context commands pointing at flow by mistake
