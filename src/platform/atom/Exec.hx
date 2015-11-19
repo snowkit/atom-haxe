@@ -21,6 +21,8 @@ typedef ExecOptions = {
  */
 class Exec {
 
+    private static var path_set:Bool = false;
+
         /** Runs a shell command with args, returning a promise that will resolve with {out, err, code}
             The promise does not reject.
             Pass the ondataout and ondataerr handlers to get incremental changes
@@ -31,25 +33,15 @@ class Exec {
                 // Configure
             var total_err = "";
             var total_out = "";
-            var spawn_options:Dynamic = {cwd: untyped process.cwd()};
+            var spawn_options:Dynamic = {cwd: process.cwd()};
             if (options != null) {
                 if (options.cwd != null) spawn_options.cwd = options.cwd;
             }
 
-                // Depending on the OS, run cmd through bash command
-            if (process.platform == 'darwin') {
-                    // Use a login shell on OSX, otherwise the users expected env vars won't be setup
-                var prev_cmd = cmd;
-                cmd = '/bin/bash';
-                args = ['-l', '-c'].concat(args);
-            }
-            else if (process.platform == 'linux') {
-                    // Explicitly use /bin/bash on Linux, to keep Linux and OSX as
-                    // similar as possible. A login shell is explicitly not used for
-                    // linux, as it's not required
-                var prev_cmd = cmd;
-                cmd = '/bin/bash';
-                args = ['-c'].concat(args);
+                // OS X El Capitan fix (for now)
+            if (process.platform == 'darwin' && !path_set) {
+                untyped process.env.PATH = "/usr/local/bin:" + process.env.PATH;
+                path_set = true;
             }
 
                 // Spawn process
