@@ -10,7 +10,8 @@ typedef HaxeServiceConsumer = {
         /** The current working directory for the hxml content */
     var hxml_cwd:String;
         /** If provided, and if using the default build,
-            will be used as argument to build the haxe project */
+            will be used as argument to build the haxe project.
+            The default hxml consumer is providing it. */
     @:optional var hxml_file:String;
         /** If provided, will be called when haxe service stopped using
             this consumer (and probably switched to another consumer) */
