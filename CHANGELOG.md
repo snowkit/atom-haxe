@@ -2,6 +2,10 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.10
+
+* Fix missing path_set to true
+
 ## 0.8.9
 
 * Minor fixes for El Capitan path fix
