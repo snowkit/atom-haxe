@@ -65,7 +65,7 @@ class HaxeDevMain {
 
 
         subscriptions.add(Atom.commands.add(name, module + ':' + name, function(opts:Dynamic):Dynamic {
-            Plugin.main_worker.run_command(command);
+            Plugin.workers.main.run_command(command);
             return null;
         }));
     }

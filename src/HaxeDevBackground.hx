@@ -1,7 +1,7 @@
 
 import platform.Log;
 
-import plugin.Plugin;
+import plugin.Background;
 
 /**
  Haxe Dev Worker (inside a child process)
@@ -15,8 +15,8 @@ class HaxeDevBackground {
     public static function main():Void {
             // Start worker
         Log.debug('Starting HaxeDev worker...');
-            // Init state
-        Plugin.init();
+            // Init background context
+        Background.init();
     }
 
 }
