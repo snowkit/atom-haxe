@@ -87,9 +87,5 @@ Use the Packages -> Haxe -> Menu options to open various debug views.
 
 ## Future plans
 
-Once the completion features and parsing have been finalized, the goal
-is to port those specific pieces to a Haxe library that can be shared
-by the sublime plugins (python), the atom plugins (js) to allow parity
-and shared code base across all major completion features. Since haxe
-can generate many languages, it has the potential to be used in java/cs/cpp
-based IDE's as well.
+Currently the shared IDE code is in progress. [Visit the tides repo for info.](https://github.com/snowkit/tides)
+This repo will migrate to being written in Haxe and using tides, in a branch. When it's ready for testers and usage we'll let you know!
