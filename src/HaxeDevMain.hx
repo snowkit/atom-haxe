@@ -15,6 +15,8 @@ import atom.Atom;
 import atom.Panel;
 import atom.CompositeDisposable;
 
+using StringTools;
+
 /**
  Public API exposed to Atom.
  */
@@ -25,9 +27,6 @@ class HaxeDevMain {
     private static var failed:Bool = false;
 
     public static function main():Void {
-            // Start plugin
-        Log.debug('Starting HaxeDev plugin...');
-        var test = "test";
             // We don't use haxe's built-in @:expose() because we want to expose
             // the whole class as a single module (with its own context)
         module.exports = cast HaxeDevMain;
@@ -41,8 +40,8 @@ class HaxeDevMain {
             // Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
         subscriptions = new CompositeDisposable();
 
-            // Register command to set hxml file
-        register_command('set-hxml-file', new commands.atom.SetHXMLFileFromTreeView());
+        init_commands();
+        init_menus();
     }
 
     public static function deactivate(state:Dynamic):Void {
@@ -56,15 +55,43 @@ class HaxeDevMain {
     public static function serialize():Dynamic {
         if (!failed) return {
             plugin: Plugin.state.serialize(),
-            support: Support.state.serialize()
+            support: Support.state.serialize(),
+            'hello': 'hello'
         };
         return null;
     }
 
-    private static function register_command(name:String, command:Command<Dynamic,Dynamic>, module:String = 'atom-workspace'):Void {
+    private static function init_commands():Void {
+        Log.debug("Init commands");
+            // Register command to set hxml file
+        register_command('set-hxml-file', new commands.atom.SetHXMLFileFromTreeView());
+    }
 
 
-        subscriptions.add(Atom.commands.add(name, module + ':' + name, function(opts:Dynamic):Dynamic {
+    private static function init_menus():Void {
+
+        Log.debug("Init menus");
+
+        Atom.contextMenu.add(untyped {
+            ".tree-view .file": [
+                { type: 'separator' },
+                { label: 'Set as active HXML file (DEV)', command: 'haxe-dev:set-hxml-file', shouldDisplay: should_display_context_tree },
+                { type: 'separator' }
+            ]
+        });
+    }
+
+    private static function should_display_context_tree(event:js.html.Event):Bool {
+        var key = '.hxml';
+        var val:String = untyped event.target.innerText;
+        if (val == null) return false;
+        return val.endsWith(key);
+    }
+
+    private static function register_command(name:String, command:Command<Dynamic,Dynamic>, module:String = 'haxe-dev'):Void {
+
+
+        subscriptions.add(Atom.commands.add('atom-workspace', module + ':' + name, function(opts:Dynamic):Dynamic {
             Plugin.workers.main.run_command(command);
             return null;
         }));

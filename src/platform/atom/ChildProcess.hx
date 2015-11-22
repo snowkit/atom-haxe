@@ -83,8 +83,8 @@ class ChildProcess {
         var node:String = process.execPath;
         var jsfile:String = untyped __filename;
             // Ensure we use the worker js file
-        if (jsfile.endsWith("-plugin.js")) {
-            jsfile = jsfile.substring(0, jsfile.length - 10) + '-worker.js';
+        if (jsfile.endsWith("-main.js")) {
+            jsfile = jsfile.substring(0, jsfile.length - 8) + '-background.js';
         }
             // Start process
         proc = NodeProcess.spawn(node, [

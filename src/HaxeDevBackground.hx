@@ -13,8 +13,6 @@ class HaxeDevBackground {
     private static var process:js.node.Process = untyped __js__('process');
 
     public static function main():Void {
-            // Start worker
-        Log.debug('Starting HaxeDev worker...');
             // Init background context
         Background.init();
     }

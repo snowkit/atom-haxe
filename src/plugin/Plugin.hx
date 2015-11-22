@@ -2,6 +2,9 @@ package plugin;
 
 import utils.Worker;
 
+import platform.MessagePanel;
+import platform.Log;
+
     /** Atom-specific plugin entry point */
 class Plugin {
 
@@ -10,6 +13,12 @@ class Plugin {
     public static var workers:Workers = null;
 
     public static function init(?serialized_state:Dynamic):Void {
+            // Init message panel
+        MessagePanel.init();
+
+            // Start plugin
+        Log.debug('Starting HaxeDev plugin...');
+
         state = new PluginState(serialized_state);
         workers = new Workers();
     }

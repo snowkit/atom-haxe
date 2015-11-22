@@ -3,7 +3,6 @@
 -lib tides
 -main HaxeDevBackground
 -js ../lib/haxe-dev-background.js
--cp ../externs
 -D atom
 -D background
 -debug

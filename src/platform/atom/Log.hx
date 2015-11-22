@@ -8,7 +8,10 @@ import js.Node.console;
 import js.Node.process;
 
 import platform.atom.ChildProcess;
+
+#if !background
 import platform.atom.MessagePanel;
+#end
 
 /**
  Debug logging utility.
