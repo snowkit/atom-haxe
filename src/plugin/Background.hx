@@ -1,5 +1,6 @@
 package plugin;
 
+    /** Entry point for background process. */
 class Background {
 
     public static var workers:Workers = null;
