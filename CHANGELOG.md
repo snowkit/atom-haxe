@@ -2,6 +2,10 @@
 
 * Working on shared haxe code implementation (see readme Future Plans)
 
+## 0.8.11
+
+* Display completion return type on the right. Add an option to put it on the left.
+
 ## 0.8.10
 
 * Fix missing path_set to true
@@ -13,7 +17,7 @@
 ## 0.8.8
 
 * Fix El Capitan default PATH for the immediate term
-* Completion fixes and tweaks to display 
+* Completion fixes and tweaks to display
 
 ## 0.8.7
 
