@@ -1,6 +1,6 @@
-package context;
+package plugin;
 
-import context.State.state;
+import plugin.Plugin.state;
 
 typedef HaxeServiceConsumer = {
         /** The name of the consumer */

@@ -3,7 +3,6 @@ package commands.atom;
 import atom.Atom;
 
 import utils.Command;
-import utils.HxmlUtils;
 
 import platform.Log;
 
@@ -11,7 +10,7 @@ import js.Node.require;
 import js.node.Path;
 import js.node.Fs;
 
-import context.State.state;
+import plugin.Plugin;
 
 class SetHXMLFileFromTreeView extends Command<Dynamic, Bool> {
 
@@ -29,19 +28,16 @@ class SetHXMLFileFromTreeView extends Command<Dynamic, Bool> {
         var file_path = package_obj.selectedPath;
 
             // Assign a default consumer (hxml)
-        state.consumer = {
+        Plugin.state.consumer = {
             name: 'default',
             hxml_cwd: Path.dirname(file_path),
             hxml_content: '' + Fs.readFileSync(file_path),
             hxml_file: file_path
         };
 
-        state.synchronize().then(function(task) {
-            Log.info("Active HXML file set to " + state.hxml_file);
-            resolve(task.result);
-        }).error(function(error) {
-            reject(error);
-        });
+        Log.info("Active HXML file set to " + Plugin.state.consumer.hxml_file);
+        
+        resolve(true);
     }
 
 }

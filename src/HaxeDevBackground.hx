@@ -1,6 +1,8 @@
 
 import platform.Log;
 
+import plugin.Plugin;
+
 /**
  Haxe Dev Worker (inside a child process)
  This is the entry point to execute code in background
@@ -14,7 +16,7 @@ class HaxeDevBackground {
             // Start worker
         Log.debug('Starting HaxeDev worker...');
             // Init state
-        context.State.init();
+        Plugin.init();
     }
 
 }

@@ -2,9 +2,10 @@
 import js.Node.module;
 import js.Browser.console;
 
-import context.State.state;
+import support.Support;
 
-import utils.HaxeParsingUtils;
+import plugin.Plugin;
+
 import utils.Worker;
 import utils.Command;
 
@@ -26,6 +27,7 @@ class HaxeDevMain {
     public static function main():Void {
             // Start plugin
         Log.debug('Starting HaxeDev plugin...');
+        var test = "test";
             // We don't use haxe's built-in @:expose() because we want to expose
             // the whole class as a single module (with its own context)
         module.exports = cast HaxeDevMain;
@@ -33,7 +35,8 @@ class HaxeDevMain {
 
     public static function activate(serialized_state:Dynamic):Void {
             // Init internal modules
-        context.State.init(serialized_state);
+        Plugin.init(serialized_state != null ? serialized_state.plugin : null);
+        Support.init(serialized_state != null ? serialized_state.support : null);
 
             // Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
         subscriptions = new CompositeDisposable();
@@ -44,13 +47,17 @@ class HaxeDevMain {
 
     public static function deactivate(state:Dynamic):Void {
             // Dispose internal modules
-        context.State.dispose();
+        Plugin.dispose();
+        Support.dispose();
 
         subscriptions.dispose();
     }
 
     public static function serialize():Dynamic {
-        if (!failed) return state.serialize();
+        if (!failed) return {
+            plugin: Plugin.state.serialize(),
+            support: Support.state.serialize()
+        };
         return null;
     }
 
@@ -58,7 +65,7 @@ class HaxeDevMain {
 
 
         subscriptions.add(Atom.commands.add(name, module + ':' + name, function(opts:Dynamic):Dynamic {
-            state.main_worker.run_command(command);
+            Plugin.main_worker.run_command(command);
             return null;
         }));
     }
