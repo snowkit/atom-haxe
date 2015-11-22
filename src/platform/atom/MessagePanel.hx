@@ -7,8 +7,9 @@ import utils.HtmlEscape;
 
 @:enum abstract PanelMessageKind(Int) {
     var INFO = 1;
-    var WARN = 2;
-    var ERROR = 3;
+    var SUCCESS = 2;
+    var WARN = 3;
+    var ERROR = 4;
 }
 
 class MessagePanel {
@@ -18,7 +19,7 @@ class MessagePanel {
     private static var visible:Bool;
 
     public static function init():Void {
-        view = new MessagePanelView({ title: 'Haxe' });
+        view = new MessagePanelView({ title: 'Haxe (dev)' });
         visible = false;
     }
 
@@ -46,8 +47,14 @@ class MessagePanel {
     public static function message(kind:PanelMessageKind, content:String):Void {
             // Escape HTML
         content = HtmlEscape.escape(content);
+            // Set CSS class from message kind
+        var class_name:String = null;
+        if (kind == SUCCESS) class_name = 'text-success';
+        else if (kind == ERROR) class_name = 'text-error';
+        else if (kind == INFO) class_name = 'text-highlight';
+        else if (kind == WARN) class_name = 'text-warning';
             // Add message
-        view.add(new PlainMessageView({ message: content, raw: true }));
+        view.add(new PlainMessageView({ message: content, raw: true, className: class_name }));
             // Scroll to top
         untyped view.body.scrollTop(1e10);
             // Display panel

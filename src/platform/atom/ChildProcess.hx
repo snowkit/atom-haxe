@@ -19,8 +19,9 @@ using StringTools;
     var READY = 1;
     var LOG_DEBUG = 2;
     var LOG_INFO = 3;
-    var LOG_WARN = 4;
-    var LOG_ERROR = 5;
+    var LOG_SUCCESS = 4;
+    var LOG_WARN = 5;
+    var LOG_ERROR = 6;
 }
 
 typedef ChildProcessMessage = {
@@ -105,6 +106,8 @@ class ChildProcess {
                 Log.debug(message.data);
             case LOG_INFO:
                 Log.info(message.data, message.display);
+            case LOG_SUCCESS:
+                Log.success(message.data, message.display);
             case LOG_WARN:
                 Log.warn(message.data, message.display);
             case LOG_ERROR:

@@ -33,9 +33,10 @@ class HaxeDevMain {
     }
 
     public static function activate(serialized_state:Dynamic):Void {
+
             // Init internal modules
-        Plugin.init(serialized_state != null ? serialized_state.plugin : null);
         Support.init(serialized_state != null ? serialized_state.support : null);
+        Plugin.init(serialized_state != null ? serialized_state.plugin : null);
 
             // Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
         subscriptions = new CompositeDisposable();
@@ -55,8 +56,7 @@ class HaxeDevMain {
     public static function serialize():Dynamic {
         if (!failed) return {
             plugin: Plugin.state.serialize(),
-            support: Support.state.serialize(),
-            'hello': 'hello'
+            support: Support.state.serialize()
         };
         return null;
     }
@@ -75,7 +75,7 @@ class HaxeDevMain {
         Atom.contextMenu.add(untyped {
             ".tree-view .file": [
                 { type: 'separator' },
-                { label: 'Set as active HXML file (DEV)', command: 'haxe-dev:set-hxml-file', shouldDisplay: should_display_context_tree },
+                { label: 'Set as active HXML file (dev)', command: 'haxe-dev:set-hxml-file', shouldDisplay: should_display_context_tree },
                 { type: 'separator' }
             ]
         });

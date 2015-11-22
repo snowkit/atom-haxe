@@ -28,3 +28,5 @@ node_modules
 
 # Apple
 .DS_Store
+lib/haxe-dev-main.js.map
+lib/haxe-dev-background.js.map

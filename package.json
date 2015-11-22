@@ -4,9 +4,7 @@
   "version": "0.0.0",
   "description": "Haxe plugin for Atom with experimental features, written in Haxe",
   "keywords": [],
-  "activationCommands": {
-    "atom-workspace": "haxe-dev:toggle"
-  },
+  "activationCommands": {},
   "repository": "https://github.com/snowkit/atom-haxe",
   "license": "MIT",
   "engines": {

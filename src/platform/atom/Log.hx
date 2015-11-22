@@ -30,6 +30,10 @@ class Log {
         process.send({kind: ChildProcessMessageKind.LOG_INFO, data: data, display: display});
     }
 
+    inline public static function success(data:Dynamic, display:Bool = true):Void {
+        process.send({kind: ChildProcessMessageKind.LOG_SUCCESS, data: data, display: display});
+    }
+
     inline public static function warn(data:Dynamic, display:Bool = true):Void {
         process.send({kind: ChildProcessMessageKind.LOG_WARN, data: data, display: display});
     }
@@ -45,10 +49,15 @@ class Log {
     }
 
     inline public static function info(data:Dynamic, display:Bool = true):Void {
+        untyped console.log(format(data));
+        if (display) MessagePanel.message(INFO, data);
+    }
+
+    inline public static function success(data:Dynamic, display:Bool = true):Void {
             // Appears with blue color on chrome console
             // Let's just use it to differenciate it
         untyped console.debug(format(data));
-        if (display) MessagePanel.message(INFO, data);
+        if (display) MessagePanel.message(SUCCESS, data);
     }
 
     inline public static function warn(data:Dynamic, display:Bool = true):Void {

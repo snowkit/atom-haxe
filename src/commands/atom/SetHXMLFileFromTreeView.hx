@@ -35,7 +35,7 @@ class SetHXMLFileFromTreeView extends Command<Dynamic, Bool> {
             hxml_file: file_path
         };
 
-        Log.info("Active HXML file set to " + Plugin.state.consumer.hxml_file);
+        Log.success("Active HXML file set to " + Plugin.state.consumer.hxml_file);
 
         resolve(true);
     }
