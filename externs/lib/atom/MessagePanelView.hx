@@ -1,10 +1,5 @@
 package lib.atom;
 
-@:enum abstract MessagePanelViewCloseMethod(String) {
-    var DETACH = "detach";
-    var HIDE = "hide";
-}
-
 @:enum abstract MessagePanelViewPosition(String) {
     var TOP = "top";
     var BOTTOM = "bottom";
@@ -16,7 +11,7 @@ typedef MessagePanelViewParams = {
         /** Set to `true` will allow the title to contain HTML (default is false) */
     @:optional var rawTitle:Bool;
         /** What should the close button do? `detach` (default) or `hide` */
-    @:optional var closeMethod:MessagePanelViewCloseMethod;
+    @:optional var closeMethod:String;
         /** How fast the fold/unfold function should run (default is `fast`) */
     @:optional var speed:Dynamic;
         /** Should new messages be added at the top? (default is `false`) */

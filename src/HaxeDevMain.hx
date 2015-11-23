@@ -4,6 +4,8 @@ import js.Node.module;
 import support.Support;
 import plugin.Plugin;
 
+import platform.Log;
+
     /** Public API exposed to Atom. */
 class HaxeDevMain {
 

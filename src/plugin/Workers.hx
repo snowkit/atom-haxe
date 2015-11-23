@@ -2,6 +2,7 @@ package plugin;
 
 import utils.Worker;
 
+    /** Easy access to the various workers */
 class Workers {
 
     public var main(get,null):Worker;
