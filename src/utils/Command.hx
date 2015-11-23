@@ -5,10 +5,8 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 #end
 
-/**
- A Command is used to encapsulate code that can be run
- on the same or another process by letting a Worker run it.
- */
+    /** A Command is used to encapsulate code that can be run
+        on the same or another process by letting a Worker run it. */
 @:autoBuild(utils.CommandValidator.validate())
 class Command<P,R> {
 
@@ -27,13 +25,16 @@ class Command<P,R> {
 
         /** Run the command on the current process. */
     public function run():Promise<Command<P,R>> {
+
         return new Promise<Command<P,R>>(function(resolve, reject) {
             internal_execute(resolve, reject);
         });
-    }
+
+    } //new
 
     @:allow(utils.Worker)
     private function internal_execute(resolve:Command<P,R>->Void, reject:Dynamic->Void):Void {
+
         try {
             execute(function(r) {
                 result = r;
@@ -42,7 +43,8 @@ class Command<P,R> {
         } catch (e:Dynamic) {
             reject(e);
         }
-    }
+
+    } //internal_execute
 
     private function execute(resolve:R->Void, reject:Dynamic->Void):Void {}
 
@@ -76,6 +78,7 @@ class CommandValidator {
         }
 
         return fields;
-    }
+
+    } //validate
 
 }

@@ -19,6 +19,7 @@ typedef ParentProcessMessage = {
     var data:Dynamic;
 }
 
+    /** Communicate with the parent process (if any) */
 class ParentProcess {
 
     private static var is_kept_alive:Bool = false;
@@ -28,22 +29,26 @@ class ParentProcess {
     private static var message_handlers:Array<String->Void> = [];
 
     public static function has_parent_process():Bool {
+
         return process.argv.indexOf('has_parent_process') != -1;
-    }
+
+    } //has_parent_process
 
     public static function on_message(callback:String->Void):Void {
             // Initialize if needed
         initialize_if_needed();
             // Add message handler
         message_handlers.push(callback);
-    }
+
+    } //on_message
 
     public static function post_message(message:String):Void {
             // Initialize if needed
         initialize_if_needed();
             // Post message
         process.send({kind: MESSAGE, data: message});
-    }
+
+    } //post_message
 
     private static function initialize_if_needed():Void {
             // Initialize contact with parent only if a parent process exists
@@ -64,7 +69,8 @@ class ParentProcess {
         });
             // Send READY signal
         process.send({kind: READY});
-    }
+
+    } //initialize_if_needed
 
     private static function keep_alive():Void {
             // Already kept alive?
@@ -81,6 +87,7 @@ class ParentProcess {
         };
 
         is_kept_alive = true;
-    }
+
+    } //keep_alive
 
 }

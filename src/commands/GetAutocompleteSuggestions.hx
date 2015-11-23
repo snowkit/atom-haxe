@@ -21,6 +21,7 @@ class GetAutocompleteSuggestions extends Command<Params, Result> {
     override function execute(resolve:Result->Void, reject:Dynamic->Void) {
 
         resolve(null);
-    }
+
+    } //execute
 
 }

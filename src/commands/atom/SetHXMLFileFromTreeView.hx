@@ -12,6 +12,7 @@ import js.node.Fs;
 
 import plugin.Plugin;
 
+    /** Set an HXML file from tree-view (right click) */
 class SetHXMLFileFromTreeView extends Command<Dynamic, Bool> {
 
     override function execute(resolve:Bool->Void, reject:Dynamic->Void) {
@@ -38,6 +39,7 @@ class SetHXMLFileFromTreeView extends Command<Dynamic, Bool> {
         Log.success("Active HXML file set to " + Plugin.state.consumer.hxml_file);
 
         resolve(true);
-    }
+
+    } //execute
 
 }

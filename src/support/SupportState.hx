@@ -27,10 +27,12 @@ class SupportState {
 
     @:allow(support.Support)
     private function new(?serialized_state:Dynamic) {
+
         if (serialized_state != null) {
             unserialize(serialized_state);
         }
-    }
+
+    } //new
 
         /** Serialize */
     public function serialize():Dynamic {
@@ -40,7 +42,8 @@ class SupportState {
         values.hxml_cwd = hxml_cwd;
         values.hxml_file = hxml_file;
         return values;
-    }
+
+    } //serialize
 
         /** Unserialize */
     public function unserialize(values:Dynamic):Void {
@@ -48,7 +51,8 @@ class SupportState {
         hxml_content = values.hxml_content;
         hxml_cwd = values.hxml_cwd;
         hxml_file = values.hxml_file;
-    }
+
+    } //unserialize
 
         /** Update */
     public function update_hxml_context(context:SupportStateHXMLContext):Void {
@@ -57,11 +61,14 @@ class SupportState {
         hxml_cwd = context.hxml_cwd;
 
         reload_hxml_context();
-    }
+
+    } //update_hxml_context
 
     private function reload_hxml_context():Void {
+        
         //
-    }
+
+    } //reload_hxml_context
 
     @:allow(support.Support)
     private function destroy():Void {}

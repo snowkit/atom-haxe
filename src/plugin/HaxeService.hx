@@ -2,6 +2,8 @@ package plugin;
 
 import plugin.Plugin.state;
 
+    /** Haxe service consumer interface.
+        To be assigned from external atom plugins. */
 typedef HaxeServiceConsumer = {
         /** The name of the consumer */
     var name:String;
@@ -23,10 +25,13 @@ typedef HaxeServiceConsumer = {
     @:optional function on_run_build(selected_file_path:String):Void;
 }
 
+    /** Haxe service exposed to other Atom plugins */
 class HaxeService {
 
     public static function set_consumer(consumer:HaxeServiceConsumer):Void {
+
         state.consumer = consumer;
-    }
+
+    } //set_consumer
 
 }

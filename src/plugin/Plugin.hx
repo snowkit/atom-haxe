@@ -36,7 +36,8 @@ class Plugin {
 
         init_commands();
         init_menus();
-    }
+
+    } //init
 
     public static function dispose():Void {
 
@@ -69,20 +70,25 @@ class Plugin {
                 { type: 'separator' }
             ]
         });
-    }
+
+    } //init_menus
 
     private static function should_display_context_tree(event:js.html.Event):Bool {
+
         var key = '.hxml';
         var val:String = untyped event.target.innerText;
         if (val == null) return false;
         return val.endsWith(key);
-    }
+
+    } //should_display_context_tree
 
     private static function register_command(name:String, command:Command<Dynamic,Dynamic>, module:String = 'haxe-dev'):Void {
+
         subscriptions.add(Atom.commands.add('atom-workspace', module + ':' + name, function(opts:Dynamic):Dynamic {
             workers.main.run_command(command);
             return null;
         }));
-    }
+
+    } //register_command
 
 }

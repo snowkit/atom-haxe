@@ -31,13 +31,17 @@ class Workers {
             main = new Worker({process_kind: CURRENT});
             background = new Worker({process_kind: CHILD, current_worker: main});
         }
-    }
+
+    } //new
 
     public function destroy():Void {
+
         main.destroy();
         main = null;
+
         background.destroy();
         background = null;
-    }
+
+    } //destroy
 
 }

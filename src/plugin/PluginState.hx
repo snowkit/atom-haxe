@@ -6,16 +6,19 @@ import platform.Log;
 
 import support.Support;
 
+    /** Atom-specific plugin state */
 class PluginState {
 
     public var consumer(default,set):HaxeServiceConsumer;
 
     @:allow(plugin.Plugin)
     private function new(?serialized_state:Dynamic) {
+
         if (serialized_state != null) {
             unserialize(serialized_state);
         }
-    }
+
+    } //new
 
         /** Serialize */
     public function serialize():Dynamic {
@@ -34,7 +37,8 @@ class PluginState {
             };
         }
         return values;
-    }
+
+    } //serialize
 
         /** Unserialize */
     public function unserialize(values:Dynamic):Void {
@@ -44,9 +48,11 @@ class PluginState {
             consumer = values.consumer;
             Log.success("Active HXML file restored to " + consumer.hxml_file);
         }
-    }
+
+    } //unserialize
 
     private function set_consumer(consumer:HaxeServiceConsumer):HaxeServiceConsumer {
+
         this.consumer = consumer;
 
             // Update state from consumer
@@ -56,7 +62,8 @@ class PluginState {
         });
 
         return consumer;
-    }
+
+    } //set_consumer
 
     @:allow(plugin.Plugin)
     private function destroy():Void {}

@@ -16,9 +16,7 @@ typedef ExecOptions = {
     @:optional var cwd: String;
 }
 
-/**
- Utility to run a command with arguments.
- */
+    /** Utility to run a command with arguments. */
 class Exec {
 
     private static var path_set:Bool = false;

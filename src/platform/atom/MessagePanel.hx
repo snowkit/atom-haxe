@@ -12,6 +12,7 @@ import utils.HtmlEscape;
     var ERROR = 4;
 }
 
+    /** Generic message panel to display logs */
 class MessagePanel {
 
     private static var view:MessagePanelView;
@@ -19,31 +20,41 @@ class MessagePanel {
     private static var visible:Bool;
 
     public static function init():Void {
+
         view = new MessagePanelView({ title: 'Haxe (dev)' });
         visible = false;
-    }
+
+    } //init
 
     public static function show():Void {
+
         view.attach();
         visible = true;
-    }
+
+    } //show
 
     public static function hide():Void {
+
         view.close();
         visible = false;
-    }
+
+    } //hide
 
     public static function clear():Void {
+
         view.clear();
-    }
+
+    } //clear
 
     public static function toggle():Void {
+
         if (visible) hide();
         else show();
-    }
 
-    /** Log a visible message on the panel.
-        Will handle the parsing of ANSI colors and links to source file or url. */
+    } //toggle
+
+        /** Log a visible message on the panel.
+            Will handle the parsing of ANSI colors and links to source file or url. */
     public static function message(kind:PanelMessageKind, content:String):Void {
             // Escape HTML
         content = HtmlEscape.escape(content);
@@ -59,6 +70,7 @@ class MessagePanel {
         untyped view.body.scrollTop(1e10);
             // Display panel
         show();
-    }
+
+    } //message
 
 }

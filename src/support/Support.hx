@@ -8,14 +8,18 @@ class Support {
     public static var state:SupportState = null;
 
     public static function init(?serialized_state:Dynamic):Void {
+
         Log.debug('Starting HaxeDev support...');
 
         state = new SupportState(serialized_state);
-    }
+
+    } //init
 
     public static function dispose():Void {
+
         state.destroy();
         state = null;
-    }
+
+    } //dispose
 
 }

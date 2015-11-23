@@ -31,27 +31,21 @@ typedef CommandCallbacks = {
     var RUN_COMMAND = 2;
 }
 
-/**
- Higher level abstraction to run tasks.
- Takes care of serializing/unserializing tasks to send them across
- different processes. This provides an easy way to run code either
- on background or main process/thread.
- */
+    /** Higher level abstraction to run tasks.
+        Takes care of serializing/unserializing tasks to send them across
+        different processes. This provides an easy way to run code either
+        on background or main process/thread. */
 class Worker {
 
     private static var workers_by_id:Map<Int,Worker> = new Map<Int,Worker>();
 
     private static var next_worker_id:Int = 0;
 
-    /**
-     Worker identifier
-     */
+        /** Worker identifier */
     public var id(get,null):Int;
     inline private function get_id():Int return id;
 
-    /**
-     Worker process kind (CURRENT, PARENT or CHILD)
-     */
+        /** Worker process kind (CURRENT, PARENT or CHILD) */
     public var process_kind(get,null):WorkerProcessKind;
     inline private function get_process_kind():WorkerProcessKind return process_kind;
 
@@ -92,12 +86,12 @@ class Worker {
         else if (process_kind == PARENT) {
             ParentProcess.on_message(on_process_message);
         }
-    }
 
-    /**
-     Run the given command on the worker.
-     */
+    } //new
+
+        /** Run the given command on the worker. */
     public function run_command<P,R>(command:Command<P,R>):Promise<Command<P,R>> {
+
         return new Promise<Command<P,R>>(function(resolve, reject) {
 
             if (process_kind == CHILD) {
@@ -123,26 +117,28 @@ class Worker {
                 command.internal_execute(resolve, reject);
             }
         });
-    }
 
-    /**
-     Destroy the worker and it's related child process if any.
-     */
+    } //new
+
+        /** Destroy the worker and it's related child process if any. */
     public function destroy() {
             // Destroy child process if needed
         if (child_process != null) {
             child_process.kill();
             child_process = null;
         }
-    }
+
+    } //destroy
 
     private function await_command_response(command_id, resolve:Dynamic->Void, reject:Dynamic->Void):Void {
             // Keep track of command id and callbacks until we get
             // news from the parent/child related process
         awaiting_command_callbacks.set(command_id, {resolve: resolve, reject: reject});
-    }
+
+    } //await_command_response
 
     private function on_process_message(message:String):Void {
+
         var unserializer = new Unserializer(message);
         var message_kind:ProcessMessageKind = unserializer.unserialize();
 
@@ -199,6 +195,7 @@ class Worker {
             var error = unserializer.unserialize();
             callbacks.reject(error);
         }
-    }
+
+    } //on_process_message
 
 }

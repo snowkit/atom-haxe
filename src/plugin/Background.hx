@@ -12,11 +12,14 @@ class Background {
         Log.debug('Starting background worker...');
 
         workers = new Workers();
-    }
+
+    } //init
 
     public static function dispose():Void {
+
         workers.destroy();
         workers = null;
-    }
+
+    } //dispose
 
 }

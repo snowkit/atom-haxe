@@ -30,6 +30,7 @@ typedef ChildProcessMessage = {
     @:optional var display:Bool;
 }
 
+    /** Create and communicate with a child process */
 class ChildProcess {
 
     private var message_handlers:Array<String->Void> = [];
@@ -45,24 +46,30 @@ class ChildProcess {
     private var killed:Bool = false;
 
     public function new() {
+
         start_proc();
-    }
+
+    } //new
 
     public function on_message(callback:String->Void):Void {
             // Add message handler
         message_handlers.push(callback);
-    }
+
+    } //on_message
 
     public function post_message(message:String):Void {
+
         if (!ready) {
             queued_messages.push(message);
             return;
         }
             // Send message to child process
         proc.send({kind: MESSAGE, data: message});
-    }
+
+    } //post_message
 
     public function kill() {
+
         killed = true;
         if (proc == null) return;
         try {
@@ -72,7 +79,8 @@ class ChildProcess {
             Log.error('Failed to kill child process.');
         }
         proc = null;
-    }
+
+    } //kill
 
     private function start_proc():Void {
             // Got some inspiration from: https://github.com/TypeStrong/atom-typescript/blob/master/lib/worker/lib/workerLib.ts
@@ -153,6 +161,7 @@ class ChildProcess {
                 start_proc();
             }
         });
-    }
+
+    } //start_proc
 
 }
