@@ -1,6 +1,6 @@
 package commands.atom;
 
-import atom.Atom;
+import atom.Atom.atom;
 
 import utils.Command;
 
@@ -17,7 +17,7 @@ class SetHXMLFileFromTreeView extends Command<Dynamic, Bool> {
 
     override function execute(resolve:Bool->Void, reject:Dynamic->Void) {
 
-        var treeview = Atom.packages.getLoadedPackage('tree-view');
+        var treeview = atom.packages.getLoadedPackage('tree-view');
         if (treeview == null) {
             reject("Cannot set an active HXML file from tree-view because the tree-view package is disabled.");
             return;

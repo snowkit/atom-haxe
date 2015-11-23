@@ -7,7 +7,7 @@ import platform.Log;
 
 import utils.Command;
 
-import atom.Atom;
+import atom.Atom.atom;
 import atom.CompositeDisposable;
 
 using StringTools;
@@ -63,7 +63,7 @@ class Plugin {
 
         Log.debug("Init menus");
 
-        Atom.contextMenu.add(untyped {
+        atom.contextMenu.add(untyped {
             ".tree-view .file": [
                 { type: 'separator' },
                 { label: 'Set as active HXML file (dev)', command: 'haxe-dev:set-hxml-file', shouldDisplay: should_display_context_tree },
@@ -84,7 +84,7 @@ class Plugin {
 
     private static function register_command(name:String, command:Command<Dynamic,Dynamic>, module:String = 'haxe-dev'):Void {
 
-        subscriptions.add(Atom.commands.add('atom-workspace', module + ':' + name, function(opts:Dynamic):Dynamic {
+        subscriptions.add(atom.commands.add('atom-workspace', module + ':' + name, function(opts:Dynamic):Dynamic {
             workers.main.run_command(command);
             return null;
         }));

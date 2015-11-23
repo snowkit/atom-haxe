@@ -1,6 +1,7 @@
 -lib hxnodejs
 -lib promhx
 -lib tides
+-lib hxatom
 -main HaxeDevMain
 -js ../lib/haxe-dev-main.js
 -cp ../externs
