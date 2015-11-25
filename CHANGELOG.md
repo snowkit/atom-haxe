@@ -4,7 +4,9 @@
 
 ## 0.8.11
 
-* Display completion return type on the right. Add an option to put it on the left.
+* Display completion return type on the right. Add an option to put it on the left
+* Minor fixes on toplevel completion display
+* Optimize and fix haxe server not running after closing the window that started it
 
 ## 0.8.10
 
