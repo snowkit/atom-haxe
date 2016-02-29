@@ -1,6 +1,6 @@
 ## 0.9.0 - Dev
 
-* Working on shared haxe code implementation (see readme Future Plans)
+* Working on shared haxe code implementation (see readme Future Plans - [tides](https://github.com/snowkit/tides))
 
 ## 0.8.11
 
@@ -9,6 +9,7 @@
 * Optimize and fix haxe server not running after closing the window that started it
 * Display haxe language snippets in addition to the compiler completion
 * Fix code completion failing after `'\''`
+* Fix decreased indent on `case` and `default` [](https://github.com/snowkit/atom-haxe/pull/53)
 
 ## 0.8.10
 
