@@ -1,0 +1,8 @@
+-lib hxnodejs
+-lib promhx
+-lib tides
+-lib hxatom
+-main AtomHaxe
+-js ../lib/atom-haxe.js
+-cp ../externs
+-debug
