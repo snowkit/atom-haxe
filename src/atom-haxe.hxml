@@ -1,5 +1,4 @@
 -lib hxnodejs
--lib promhx
 -lib tides
 -lib hxatom
 -main AtomHaxe
