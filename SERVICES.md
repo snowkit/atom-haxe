@@ -82,7 +82,7 @@ The argument for the completion consumer function is a single object, with the f
     - The callback to notify you a build was triggered by the user.
 - `onBuildSelectorQuery`
     - The callback to query _selectors_ that allow a build to run
-    - These are additional to `source.haxe` which is the default
+    - These are additional to `source.haxe, source.hx` which is the default
     - Example: `return ['source.json', 'source.xml']` would allow builds to run from these file types
     - This is a list of atom _selectors_ to trigger the build command
     - If the selector doesn't match these and the default, the build command will be ignored
@@ -137,5 +137,3 @@ On top of that, the following guidelines are suggested:
 ## Conclusion
 
 Don't forget to browse the [Atom documentation](https://atom.io/docs) and blogs!
-
-
