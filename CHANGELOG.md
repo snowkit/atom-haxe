@@ -2,6 +2,10 @@
 
 * Working on shared haxe code implementation (see readme Future Plans - [tides](https://github.com/snowkit/tides))
 
+## 0.8.12
+
+* Improve El Capitan default PATH fix
+
 ## 0.8.11
 
 * Display completion return type on the right. Add an option to put it on the left
