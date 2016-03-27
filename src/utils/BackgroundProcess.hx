@@ -35,7 +35,7 @@ class BackgroundProcess {
 
     private var message_handlers:Array<String->Void> = [];
 
-    private var proc:js.node.child_process.BackgroundProcess;
+    private var proc:js.node.child_process.ChildProcess;
 
     private var got_node_enoent_error:Bool = false;
 
