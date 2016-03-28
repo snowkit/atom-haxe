@@ -1,24 +1,30 @@
 {
   "name": "haxe",
-  "main": "./lib/haxe.js",
+  "main": "./lib/atom-haxe.js",
   "version": "0.8.12",
   "description": "atom.io haxe plugin, includes completion, error checking and more.",
   "activationCommands": {},
-  "providedServices": {
-    "haxe-completion.provider": {
-      "description": "Provides a haxe completion server, with query interface.",
+  "consumedServices": {
+    "status-bar": {
       "versions": {
-        "1.0.0": "completion_service"
+        "^1.0.0": "consumeStatusBar"
       }
-    },
+    }
+  },
+  "providedServices": {
     "autocomplete.provider": {
       "versions": {
-        "2.0.0": "provide"
+        "2.0.0": "provide_autocomplete"
       }
     },
     "linter": {
       "versions": {
         "1.0.0": "provide_linter"
+      }
+    },
+    "haxe": {
+      "versions": {
+        "1.0.0": "provide_haxe_service"
       }
     }
   },

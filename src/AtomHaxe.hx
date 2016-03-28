@@ -1,10 +1,15 @@
 
 import js.Node.module;
 
+import service.HaxeService;
+
+import plugin.Plugin;
+
+// TODO implement toolbar service
+// TODO implement build service
+
     /** Public API exposed to Atom. */
 class AtomHaxe {
-
-    private static var failed:Bool = false;
 
     public static function main():Void {
             // We don't use haxe's built-in @:expose() because we want to expose
@@ -15,21 +20,37 @@ class AtomHaxe {
 
     public static function activate(serialized_state:Dynamic):Void {
             // Init internal modules
+        Plugin.init(serialized_state);
 
     } //activate
 
     public static function deactivate(state:Dynamic):Void {
             // Dispose internal modules
+        Plugin.dispose();
 
     } //deactivate
 
     public static function serialize():Dynamic {
 
-        if (!failed) return {
-            //
-        };
-        return null;
+        return Plugin.serialize();
 
     } //serialize
+
+
+/// Consumed services
+
+    public static function consumeStatusBar(statusBar:Dynamic):Void {
+
+        // TODO
+
+    } //consumeStatusBar
+
+/// Provided services
+
+    public static function provide_haxe_service():HaxeService {
+
+        return Plugin.service;
+
+    } //provide_haxe
 
 }

@@ -3,7 +3,7 @@ package utils;
 import npm.MessagePanelView;
 import npm.PlainMessageView;
 
-import utils.HtmlEscape;
+import utils.HTML;
 
 @:enum abstract PanelMessageKind(Int) {
     var INFO = 1;
@@ -45,7 +45,7 @@ class MessagePanel {
     public static function init():Void {
 
         view = new MessagePanelView({
-            title: 'Haxe (dev)',
+            title: 'Haxe',
             closeMethod: 'custom_close'
         });
 
@@ -105,7 +105,7 @@ class MessagePanel {
             Will handle the parsing of ANSI colors and links to source file or url. (TODO) */
     public static function message(kind:PanelMessageKind, content:String):Void {
             // Escape HTML
-        content = HtmlEscape.escape(content);
+        content = HTML.escape(content);
             // Set CSS class from message kind
         var class_name:String = null;
         if (kind == SUCCESS) class_name = 'text-success';
@@ -124,6 +124,13 @@ class MessagePanel {
     private static function delay_hide():Void {
 
         var delay = 5000; // TODO make configurable
+
+            // Reset any existing delayed hide
+        if (timeout_id != null) {
+            js.Node.clearTimeout(timeout_id);
+            timeout_id = null;
+        }
+
         timeout_id = js.Node.setTimeout(function() {
             timeout_id = null;
             hide();

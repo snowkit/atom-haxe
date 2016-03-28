@@ -27,7 +27,7 @@ using StringTools;
 typedef BackgroundProcessMessage = {
     var kind:BackgroundProcessMessageKind;
     @:optional var data:Dynamic;
-    @:optional var display:Bool;
+    @:optional var options:Log.LogOptions;
 }
 
     /** Create and communicate with a background (child) process */
@@ -120,13 +120,13 @@ class BackgroundProcess {
             case LOG_DEBUG:
                 Log.debug(message.data);
             case LOG_INFO:
-                Log.info(message.data, message.display);
+                Log.info(message.data, message.options);
             case LOG_SUCCESS:
-                Log.success(message.data, message.display);
+                Log.success(message.data, message.options);
             case LOG_WARN:
-                Log.warn(message.data, message.display);
+                Log.warn(message.data, message.options);
             case LOG_ERROR:
-                Log.error(message.data, message.display);
+                Log.error(message.data, message.options);
             case READY:
                 ready = true;
                     // Send queued messages
