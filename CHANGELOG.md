@@ -2,6 +2,10 @@
 
 * Working on shared haxe code implementation (see readme Future Plans - [tides](https://github.com/snowkit/tides))
 
+## 0.8.13
+
+* Add save all files on build option, thanks @DjPale
+
 ## 0.8.12
 
 * Improve El Capitan default PATH fix
