@@ -2,6 +2,10 @@
 
 * Working on shared haxe code implementation (see readme Future Plans - [tides](https://github.com/snowkit/tides))
 
+## 0.8.14
+
+* Handle both source.haxe and source.hx extensions for compatility with unfixed/fixed language-haxe plugins (see [jeremyfa/language-haxe#3](https://github.com/jeremyfa/language-haxe/issues/3#issuecomment-214175415))
+
 ## 0.8.13
 
 * Add save all files on build option, thanks @DjPale
