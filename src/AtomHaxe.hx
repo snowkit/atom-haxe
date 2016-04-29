@@ -41,16 +41,20 @@ class AtomHaxe {
 
     public static function consumeStatusBar(statusBar:Dynamic):Void {
 
-        // TODO
-
     } //consumeStatusBar
 
 /// Provided services
 
     public static function provide_haxe_service():HaxeService {
 
-        return Plugin.service;
+        return Plugin.haxe_service;
 
-    } //provide_haxe
+    } //provide_haxe_service
+
+    public static function provide_linter_service():Dynamic {
+
+        return Plugin.linter_service;
+
+    } //provide_linter
 
 }

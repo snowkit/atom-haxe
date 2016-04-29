@@ -15,6 +15,8 @@ import js.Node.require;
 import js.node.Path;
 import js.node.Fs;
 
+import linting.Lint;
+
 using StringTools;
 
     /** Consumer interface to feed the haxe service */
@@ -56,7 +58,10 @@ class Plugin {
     private static var subscriptions:CompositeDisposable = null;
 
     @:allow(AtomHaxe)
-    private static var service(get,null):HaxeService;
+    private static var haxe_service(get,null):HaxeService;
+
+    @:allow(AtomHaxe)
+    private static var linter_service(get,null):Dynamic;
 
     public static var state(default,null):State = null;
 
@@ -209,7 +214,7 @@ class Plugin {
             }
         };
 
-        Log.success("Active HXML file set to " + state.hxml.file, {display: true});
+        Log.success("Active HXML file set to " + state.hxml.file, {display: true, clear: true});
 
     } //set_hxml_file_from_treeview
 
@@ -219,11 +224,28 @@ class Plugin {
 
     } //build
 
+/// Linter
+
+    private static function get_linter_service():Dynamic {
+
+        return {
+            grammarScopes: ['source.haxe', 'source.hx'],
+            scope: 'project',
+            lintOnFly: false,
+            lint: function(text_editor) {
+                return new Promise<Dynamic>(function(resolve, reject) {
+                    Lint.lint_project(text_editor, resolve);
+                });
+            }
+        };
+
+    }
+
 /// Consumed services
 
-    private static function get_service():HaxeService {
+    private static function get_haxe_service():HaxeService {
 
-        return service;
+        return haxe_service;
 
     }
 

@@ -17,18 +17,20 @@ class DefaultBuilder {
             // We can assume since we did state.is_valid before
         var args = state.as_args();
         var build = Run.haxe(args, {}, onout, onerr);
-        Log.info('Running build \u2026', {display: true});
+        Log.info('Running build \u2026', {display: true, clear: true});
         Log.debug('haxe ' + args.join(' '));
+
         build.then(function(res:ExecResult) {
             if (res.code != 0) {
                 atom.notifications.addWarning('Haxe: Build failed. Check log.', {});
-                Log.error('Build failed', {display: true, clear: true});
+                Log.error('Build failed', {display: true});
             } else {
                 atom.notifications.addSuccess('Haxe: Build succeeded', {});
-                Log.success('Build succeeded', {display: true, clear: true});
+                Log.success('Build succeeded', {display: true});
             }
         });
-    }
+
+    } //build
 
     private static function onout(s:String):Void {
         Log.info(s, {display: true});

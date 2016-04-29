@@ -19,7 +19,7 @@
     },
     "linter": {
       "versions": {
-        "1.0.0": "provide_linter"
+        "1.0.0": "provide_linter_service"
       }
     },
     "haxe": {
