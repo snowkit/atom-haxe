@@ -233,9 +233,7 @@ class Plugin {
             scope: 'project',
             lintOnFly: false,
             lint: function(text_editor) {
-                return new Promise<Dynamic>(function(resolve, reject) {
-                    Lint.lint_project(text_editor, resolve);
-                });
+                return Lint.lint_project(text_editor);
             }
         };
 

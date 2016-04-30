@@ -5,10 +5,13 @@ import atom.TextEditor;
 
 import utils.Promise;
 import utils.Run;
+import utils.Exec;
 
 import haxe.Timer;
 
 import plugin.Plugin.state;
+
+import tides.parse.Haxe;
 
 class Lint {
 
@@ -17,29 +20,36 @@ class Lint {
     static var should_wait_for_compiler:Bool = true;
 
         // Last compiler output errors
-    static var compiler_errors:Array<Dynamic> = [];
+    static var compiler_errors:Array<HaxeCompilerOutputElement> = [];
 
-    public static function lint_project(editor:TextEditor, done:Dynamic):Void {
+    public static function lint_project(editor:TextEditor):Promise<Dynamic> {
 
-            // The first lint is delayed to be sure the compiler is ready
-        if (should_wait_for_compiler) {
+            // This promise always resolves
+        return new Promise<Dynamic>(function(resolve, reject) {
 
-            var time = atom.config.get('haxe.server_activation_start_delay');
-            Timer.delay(function() {
-                    // Update flag
-                should_wait_for_compiler = false;
-                    // Lint
-                lint_project(editor, done);
+                // The first lint is delayed to be sure the compiler is ready
+            if (should_wait_for_compiler) {
 
-            }, (time + 1) * 1000);
+                var time = atom.config.get('haxe.server_activation_start_delay');
+                Timer.delay(function() {
+                        // Update flag
+                    should_wait_for_compiler = false;
+                        // Lint
+                    lint_project(editor).then(function(result) {
+                        resolve(result);
+                    });
 
-        } else {
+                }, (time + 1) * 1000);
 
-            run_compiler(function() {
-                provide_lint_items(editor, done);
-            });
+            } else {
 
-        }
+                run_compiler(function() {
+                    provide_lint_items(editor, resolve);
+                });
+
+            }
+
+        });
 
     } //lint_project
 
@@ -59,10 +69,10 @@ class Lint {
 
         args = state.as_args(args);
 
-        Run.haxe(args).then(function(result) {
+        Run.haxe(args).then(function(result:ExecResult) {
 
             if (result.err.length > 0) {
-                compiler_errors = []; // TODO Compiler.parse_output(result.err)
+                compiler_errors = Haxe.parse_compiler_output(result.err);
             } else {
                 compiler_errors = [];
             }
@@ -73,9 +83,9 @@ class Lint {
 
     } //run_compiler
 
-    static function provide_lint_items(editor:TextEditor, done:Void->Void):Void {
+    static function provide_lint_items(editor:TextEditor, resolve:Dynamic->Void):Void {
 
-
+        
 
     } //provide_lint_items
 
