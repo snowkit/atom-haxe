@@ -52,7 +52,7 @@ class AtomHaxe {
     } //provide_haxe_service
 
     public static function provide_linter_service():Dynamic {
-
+        
         return Plugin.linter_service;
 
     } //provide_linter

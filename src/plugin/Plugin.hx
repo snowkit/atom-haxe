@@ -15,7 +15,7 @@ import js.Node.require;
 import js.node.Path;
 import js.node.Fs;
 
-import linting.Lint;
+import lint.Lint;
 
 using StringTools;
 
