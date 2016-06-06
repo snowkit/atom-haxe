@@ -11,6 +11,8 @@ import utils.MessagePanel;
 import utils.Log;
 import utils.Promise;
 
+import server.HaxeServer;
+
 import js.Node.require;
 import js.node.Path;
 import js.node.Fs;
