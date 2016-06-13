@@ -123,7 +123,7 @@ class MessagePanel {
 
     private static function delay_hide():Void {
 
-        var delay = 5000; // TODO make configurable
+        var delay = 50000; // TODO make configurable
 
             // Reset any existing delayed hide
         if (timeout_id != null) {
