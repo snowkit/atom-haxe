@@ -67,6 +67,8 @@ class Plugin {
 
     public static var state(default,null):State = null;
 
+    public static var haxe_server(default,null):HaxeServer = null;
+
 
 /// Lifecycle
 
@@ -80,6 +82,7 @@ class Plugin {
                 // Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
             subscriptions = new CompositeDisposable();
 
+            init_server();
             init_commands();
             init_menus();
 
@@ -174,6 +177,19 @@ class Plugin {
         return val.endsWith(key);
 
     } //should_display_context_tree
+
+/// Server
+
+    private static function init_server():Void {
+            // Init haxe server
+        haxe_server = new HaxeServer();
+        haxe_server.start().then(function(result) {
+            Log.debug(result);
+        }).catchError(function(error) {
+            Log.error(error);
+        });
+
+    } //init_server
 
 /// Commands
 

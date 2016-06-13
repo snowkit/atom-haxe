@@ -14,6 +14,10 @@ import js.node.Buffer;
 import js.node.ChildProcess;
 import js.node.stream.Readable;
 
+import utils.Log;
+
+using StringTools;
+
 class HaxeServer {
 
     static var RE_VERSION = ~/^(\d+)\.(\d+)\.(\d+)(?:\s.*)?$/;
@@ -21,7 +25,7 @@ class HaxeServer {
     var proc:ChildProcessObject;
     var version:Array<Int>;
     var buffer:MessageBuffer;
-    var next_msg_len:Int;
+    var next_msg_len:Int = -1;
     var callbacks:Array<String->Void> = [];
 
     public function new() {
@@ -32,13 +36,18 @@ class HaxeServer {
 
         return new Promise<String>(function(resolve, reject) {
 
+            Log.debug('Start haxe server');
+
+            // TODO remove atom dependency
             var haxe:String = atom.config.get('haxe.haxe_path');
             if (haxe == null || haxe.length == 0) haxe = 'haxe';
 
             proc = ChildProcess.spawn(haxe, ['--wait', 'stdio']);
             buffer = new MessageBuffer();
+            next_msg_len = -1;
 
             proc.stdout.on(ReadableEvent.Data, function(buf:Buffer) {
+                Log.debug(buf.toString());
                 // TODO log buf.toString()?
             });
 
@@ -73,11 +82,69 @@ class HaxeServer {
 
     } //start
 
+    static var stdin_sep_buf = new Buffer([1]);
+
     public function send(args:Array<String>, stdin:String):Promise<String> {
 
         return new Promise<String>(function(resolve, reject) {
 
+            if (stdin != null) {
+                args.push('-D');
+                args.push('display-stdin');
+            }
 
+            var chunks = [];
+            var length = 0;
+            for (arg in args) {
+                var buf = new Buffer(arg + "\n");
+                chunks.push(buf);
+                length += buf.length;
+            }
+
+            if (stdin != null) {
+                chunks.push(stdin_sep_buf);
+                var buf = new Buffer(stdin);
+                chunks.push(buf);
+                length += buf.length + stdin_sep_buf.length;
+            }
+
+            var len_buf = new Buffer(4);
+            len_buf.writeInt32LE(length, 0);
+            proc.stdin.write(len_buf);
+
+            proc.stdin.write(Buffer.concat(chunks, length));
+
+            callbacks.push(function(data) {
+                if (data == null /*|| token.canceled*/)
+                    return resolve(null);
+
+                var buf = new StringBuf();
+                var has_error = false;
+                for (line in data.split("\n")) {
+                    switch (line.fastCodeAt(0)) {
+                        case 0x01: // print
+                            trace("Haxe print:\n" + line.substring(1).replace("\x01", "\n"));
+                        case 0x02: // error
+                            has_error = true;
+                        default:
+                            buf.add(line);
+                            buf.addChar("\n".code);
+                    }
+                }
+
+                var data = buf.toString().trim();
+
+                if (has_error) {
+                    reject("Error from haxe server: " + data);
+                    return;
+                }
+
+                try {
+                    resolve(data);
+                } catch (e:Dynamic) {
+                    reject("Exception while handling haxe server response: " + e);
+                }
+            });
 
         }); //Promise
 
@@ -105,8 +172,11 @@ class HaxeServer {
 
     } //on_data
 
-    function on_exit(code, message):Void {
+    function on_exit(code:Int, message:String):Void {
 
+        Log.debug('Haxe server was killed: ' + code + ', ' + message);
+        Log.debug('Restart it...');
+        start();
 
     } //on_exit
 
