@@ -13,6 +13,8 @@ import utils.Promise;
 
 import server.HaxeServer;
 
+import completion.Query;
+
 import js.Node.require;
 import js.node.Path;
 import js.node.Fs;
