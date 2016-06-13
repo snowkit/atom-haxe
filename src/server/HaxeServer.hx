@@ -176,7 +176,12 @@ class HaxeServer {
 
         Log.debug('Haxe server was killed: ' + code + ', ' + message);
         Log.debug('Restart it...');
-        start();
+        
+        start().then(function(result) {
+            Log.debug(result);
+        }).catchError(function(error) {
+            Log.error(error);
+        });
 
     } //on_exit
 
