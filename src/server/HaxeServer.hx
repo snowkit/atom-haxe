@@ -15,6 +15,7 @@ import js.node.ChildProcess;
 import js.node.stream.Readable;
 
 import utils.Log;
+import utils.CancellationToken;
 
 using StringTools;
 
@@ -84,7 +85,7 @@ class HaxeServer {
 
     static var stdin_sep_buf = new Buffer([1]);
 
-    public function send(args:Array<String>, stdin:String):Promise<String> {
+    public function send(args:Array<String>, ?token:CancellationToken, ?stdin:String):Promise<String> {
 
         return new Promise<String>(function(resolve, reject) {
 
@@ -111,12 +112,13 @@ class HaxeServer {
             var len_buf = new Buffer(4);
             len_buf.writeInt32LE(length, 0);
             proc.stdin.write(len_buf);
-
             proc.stdin.write(Buffer.concat(chunks, length));
 
             callbacks.push(function(data) {
-                if (data == null /*|| token.canceled*/)
-                    return resolve(null);
+                if (data == null || (token != null && token.canceled)) {
+                    resolve(null);
+                    return;
+                }
 
                 var buf = new StringBuf();
                 var has_error = false;
@@ -135,7 +137,7 @@ class HaxeServer {
                 var data = buf.toString().trim();
 
                 if (has_error) {
-                    reject("Error from haxe server: " + data);
+                    reject(data);
                     return;
                 }
 
@@ -176,7 +178,7 @@ class HaxeServer {
 
         Log.debug('Haxe server was killed: ' + code + ', ' + message);
         Log.debug('Restart it...');
-        
+
         start().then(function(result) {
             Log.debug(result);
         }).catchError(function(error) {
