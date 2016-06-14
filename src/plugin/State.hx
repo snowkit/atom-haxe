@@ -34,6 +34,7 @@ class State {
 
         /** Serialize */
     public function serialize():Dynamic {
+
             // Put all values we want to keep in the mapping
         var values:Dynamic = {};
         if (consumer != null) {

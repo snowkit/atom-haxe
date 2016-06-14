@@ -52,8 +52,14 @@ class AtomHaxe {
     } //provide_haxe_service
 
     public static function provide_linter_service():Dynamic {
-        
+
         return Plugin.linter_service;
+
+    } //provide_linter
+
+    public static function provide_autocomplete():Dynamic {
+
+        return Plugin.autocomplete_provider;
 
     } //provide_linter
 

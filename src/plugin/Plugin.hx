@@ -14,6 +14,7 @@ import utils.Promise;
 import server.HaxeServer;
 
 import completion.Query;
+import completion.AutocompleteProvider;
 
 import js.Node.require;
 import js.node.Path;
@@ -66,6 +67,9 @@ class Plugin {
 
     @:allow(AtomHaxe)
     private static var linter_service(get,null):Dynamic;
+
+    @:allow(AtomHaxe)
+    private static var autocomplete_provider(get,null):Dynamic;
 
     public static var state(default,null):State = null;
 
@@ -257,7 +261,25 @@ class Plugin {
             }
         };
 
-    }
+    } //get_linter_service
+
+/// Autocomplete provider
+
+    private static function get_autocomplete_provider():Dynamic {
+
+        var autocomplete_provider = new AutocompleteProvider();
+
+        return {
+            selector: '.source.haxe, .source.hx',
+            disableForSelector: '.source.haxe .comment, .source.hx .comment',
+            inclusionPriority: 2,
+            excludeLowerPriority: false,
+            getSuggestions: function(options) {
+                return autocomplete_provider.get_suggestions(options);
+            }
+        }
+
+    } //get_autocomplete_provider
 
 /// Consumed services
 
@@ -265,6 +287,6 @@ class Plugin {
 
         return haxe_service;
 
-    }
+    } //get_haxe_service
 
 }
