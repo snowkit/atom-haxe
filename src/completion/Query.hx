@@ -7,9 +7,7 @@ import plugin.Plugin.haxe_server;
 import plugin.Plugin.state;
 
 enum CompletionKind {
-    FIELD_ACCESS;
-    CALL_ARGUMENT;
-    TYPE_PATH;
+    DEFAULT;
     USAGE;
     POSITION;
     TOP_LEVEL;
