@@ -1,0 +1,12 @@
+[submodule "git/hxatom"]
+    path = git/hxatom
+    url = git@github.com:jeremyfa/hxatom.git
+    branch = master
+[submodule "git/hxnodejs"]
+    path = git/hxnodejs
+    url = git@github.com:HaxeFoundation/hxnodejs.git
+    branch = master
+[submodule "git/tides"]
+    path = git/tides
+    url = git@github.com:snowkit/tides.git
+    branch = master
