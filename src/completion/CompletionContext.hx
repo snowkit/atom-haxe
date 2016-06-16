@@ -34,6 +34,8 @@ enum CompletionStatus {
     NONE;
     FETCHING;
     FETCHED;
+    CANCELED;
+    BROKEN;
 }
 
 typedef Suggestion = {
@@ -73,6 +75,8 @@ class CompletionContext {
     public var status:CompletionStatus = NONE;
 
     var fetch_promise:Promise<CompletionContext> = null;
+
+    var fetch_reject:String->Void = null;
 
     public function new(options:CompletionContextOptions) {
 
@@ -131,7 +135,7 @@ class CompletionContext {
                 }
 
             default:
-                completion_index = cursor_index;
+                completion_index = cursor_index; // TODO find "word_start"
                 completion_kind = TOP_LEVEL;
 
         }
@@ -158,17 +162,35 @@ class CompletionContext {
                 fetch_promise = fetch_from_previous_context(previous_context);
             }
             else {
+                    // Cancel previous context fetching if needed
+                if (previous_context != null && previous_context.status == FETCHING) {
+                    previous_context.cancel_fetch();
+                }
+
                     // Otherwise perform "fresh" fetch
                 fetch_promise = new Promise<CompletionContext>(function(resolve, reject) {
 
-                        // TODO implement actual fetch
-                    suggestions = [];
-                    tooltip = null;
-                    compute_filtered_suggestions();
+                    if (status == CANCELED) {
+                        reject("Fetch was canceled");
+                        return;
+                    }
 
-                    status = FETCHED;
+                    fetch_reject = reject;
 
-                    resolve(this);
+                    haxe.Timer.delay(function() {
+
+                            // TODO implement actual fetch
+                        suggestions = [];
+                        tooltip = null;
+                        compute_filtered_suggestions();
+
+                            // At fetch result/error
+                        if (status != CANCELED) {
+                            status = FETCHED;
+                            resolve(this);
+                        }
+
+                    }, 0);
 
                 }); //Promise
             }
@@ -179,7 +201,7 @@ class CompletionContext {
 
     } //fetch
 
-    inline public function can_use_previous_context(previous_context:CompletionContext):Bool {
+    function can_use_previous_context(previous_context:CompletionContext):Bool {
 
         return previous_context != null
             && previous_context.completion_index == completion_index
@@ -191,28 +213,64 @@ class CompletionContext {
 
         return new Promise<CompletionContext>(function(resolve, reject) {
 
+            if (status == CANCELED) {
+                reject("Fetch was canceled");
+                return;
+            }
+
+            fetch_reject = reject;
+
             previous_context.fetch().then(function(previous_context) {
 
-                suggestions = previous_context.suggestions;
-                tooltip = previous_context.tooltip;
+                    // At fetch result
+                if (status != CANCELED) {
+                    return;
+                    status = FETCHED;
 
-                if (previous_context.prefix == prefix) {
-                    filtered_suggestions = previous_context.filtered_suggestions;
-                } else {
-                    compute_filtered_suggestions();
+                    suggestions = previous_context.suggestions;
+                    tooltip = previous_context.tooltip;
+
+                    if (previous_context.prefix == prefix) {
+                        filtered_suggestions = previous_context.filtered_suggestions;
+                    } else {
+                        compute_filtered_suggestions();
+                    }
+
+                    resolve(this);
                 }
-
-                resolve(this);
 
             }).catchError(function(error) {
 
-                reject(error);
+                if (status != CANCELED) {
+                    status = BROKEN;
+
+                    reject(error);
+                }
 
             }); //fetch
 
         }); //Promise
 
     } //fetch_from_previous_context
+
+    function cancel_fetch():Void {
+
+        trace('CANCEL FETCH');
+
+        if (status == FETCHING) {
+            status = CANCELED;
+
+            if (fetch_reject != null) {
+                var reject = fetch_reject;
+                fetch_reject = null;
+                reject("Fetch was canceled");
+            }
+        }
+        else {
+            status = CANCELED;
+        }
+
+    } //cancel_fetch
 
     function compute_filtered_suggestions() {
 
