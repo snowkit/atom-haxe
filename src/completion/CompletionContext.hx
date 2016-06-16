@@ -14,6 +14,10 @@ typedef CompletionContextOptions = {
 
 } //CompletionContextOptions
 
+    /** Every possible kind of completions. This enum doesn't
+        necessarily reflect what is possible with haxe compiler/server queries.
+        Plugin could decide to use or not use the haxe compiler depending
+        on the completion kind at the current position. */
 enum CompletionKind {
     DOT_PACKAGE;
     DOT_PROPERTY;
