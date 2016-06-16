@@ -46,11 +46,6 @@ class Query {
                 args.push(cwd);
             }
 
-                // Allow custom args
-            if (options.args != null) {
-                args = args.concat(options.args);
-            }
-
             var hxml_args = state.hxml_as_args();
             if (hxml_args == null) {
                 reject('No completion hxml is configured');
@@ -58,6 +53,23 @@ class Query {
             }
 
             args = args.concat(hxml_args);
+
+                // TODO only do this when really needed
+                //      We could try without first, then if some
+                //      specific error "not in class path" try
+                //      again with the added -cp path
+                
+                // Add -cp file's path because haxe compiler
+                // is a bit too picky on lib code if we don't
+            if (file != null) {
+                args.push('-cp');
+                args.push(file.substr(0, file.lastIndexOf('/')));
+            }
+
+                // Allow custom args
+            if (options.args != null) {
+                args = args.concat(options.args);
+            }
 
             args.push('--no-output');
             args.push('--display');
@@ -80,8 +92,7 @@ class Query {
 
             haxe_server.send(args, stdin).then(function(result) {
 
-                trace('QUERY RESULT');
-                trace(result);
+                resolve(result);
 
             }).catchError(function(error) {
 

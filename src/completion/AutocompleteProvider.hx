@@ -4,6 +4,7 @@ import utils.CancellationToken;
 import utils.Promise;
 
 import completion.Query;
+import completion.CompletionContext;
 
 import atom.TextEditor;
 import atom.Range;
@@ -35,6 +36,7 @@ typedef Suggestion = {
 
 } //Suggestion
 
+    /** Provide code completion to atom's autocomplete-plus plugin */
 class AutocompleteProvider {
 
     var last_query_token:CancellationToken;
@@ -56,6 +58,12 @@ class AutocompleteProvider {
             var text = options.editor.getText();
             var index = text_before_cursor.length;
 
+            var context = new CompletionContext({
+                file_path: options.editor.getBuffer().file.path,
+                file_content: text,
+                cursor_index: index
+            });
+
             Query.run(DEFAULT, {
                 file: options.editor.getBuffer().file.path,
                 stdin: text,
@@ -68,7 +76,10 @@ class AutocompleteProvider {
             })
             .catchError(function(error) {
 
-                Log.warn(error);
+                Log.warn('No completion found');
+
+                // TODO log server error, when
+                // completion debug is enabled
 
             });
 
