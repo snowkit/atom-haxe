@@ -64,7 +64,7 @@ class AutocompleteProvider {
                 cursor_index: index
             });
 
-            Query.run(DEFAULT, {
+            Query.run({
                 file: options.editor.getBuffer().file.path,
                 stdin: text,
                 byte: Buffer.byteLength(text_before_cursor, 'utf8')
