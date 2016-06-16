@@ -30,7 +30,7 @@ typedef GetSuggestionsOptions = {
 
 } //GetSuggestionsOptions
 
-typedef Suggestion = {
+typedef AutocompletePlusSuggestion = {
 
 
 
@@ -39,13 +39,13 @@ typedef Suggestion = {
     /** Provide code completion to atom's autocomplete-plus plugin */
 class AutocompleteProvider {
 
-    var last_query_token:CancellationToken;
+    var context:CompletionContext = null;
 
     public function new() {
 
     } //new
 
-    public function get_suggestions(options:GetSuggestionsOptions):Promise<Array<Suggestion>> {
+    public function get_suggestions(options:GetSuggestionsOptions):Promise<Array<AutocompletePlusSuggestion>> {
 
         Log.debug('Get suggestions...');
 
@@ -58,12 +58,24 @@ class AutocompleteProvider {
             var text = options.editor.getText();
             var index = text_before_cursor.length;
 
-            var context = new CompletionContext({
+            var previous_context = context;
+            context = new CompletionContext({
                 file_path: options.editor.getBuffer().file.path,
                 file_content: text,
                 cursor_index: index
             });
 
+            context.fetch(previous_context).then(function(context:CompletionContext) {
+
+                Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Tooltip: ' + context.tooltip);
+
+            }).catchError(function(error) {
+
+                Log.error(error);
+
+            }); //fetch
+
+/*
             Query.run({
                 file: options.editor.getBuffer().file.path,
                 stdin: text,
@@ -81,7 +93,7 @@ class AutocompleteProvider {
                 // TODO log server error, when
                 // completion debug is enabled
 
-            });
+            });*/
 
         }); //Promise
 

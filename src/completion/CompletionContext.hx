@@ -4,6 +4,8 @@ import tides.parse.Haxe;
 
 import completion.Query;
 
+import utils.Promise;
+
 typedef CompletionContextOptions = {
 
     var file_path:String;
@@ -14,7 +16,7 @@ typedef CompletionContextOptions = {
 
 } //CompletionContextOptions
 
-    /** Every possible kind of completions. This enum doesn't
+    /** Every possible kinds of completion. This enum doesn't
         necessarily reflect what is possible with haxe compiler/server queries.
         Plugin could decide to use or not use the haxe compiler depending
         on the completion kind at the current position. */
@@ -28,27 +30,49 @@ enum CompletionKind {
     TOP_LEVEL;
 }
 
+enum CompletionStatus {
+    NONE;
+    FETCHING;
+    FETCHED;
+}
+
+typedef Suggestion = {
+
+}
+
     /** Current completion context: file contents, cursor position...
         and related utilities to provide additional info. */
 class CompletionContext {
 
 /// Initial info
 
-    var file_path(default,null):String;
+    public var file_path(default,null):String;
 
-    var file_content(default,null):String;
+    public var file_content(default,null):String;
 
-    var cursor_index(default,null):Int;
+    public var cursor_index(default,null):Int;
 
 /// Computed info
 
-    var completion_index(default,null):Int = -1;
+    public var completion_index(default,null):Int = -1;
 
-    var completion_kind(default,null):CompletionKind = null;
+    public var completion_kind(default,null):CompletionKind = null;
 
-    var position_info(default,null):HaxePositionInfo;
+    public var position_info(default,null):HaxePositionInfo;
 
-    var prefix(default,null):String = '';
+    public var prefix(default,null):String = '';
+
+    public var tooltip(default,null):String;
+
+    public var suggestions(default,null):Array<Suggestion>;
+
+    public var filtered_suggestions(default,null):Array<Suggestion>;
+
+/// State
+
+    public var status:CompletionStatus = NONE;
+
+    var fetch_promise:Promise<CompletionContext> = null;
 
     public function new(options:CompletionContextOptions) {
 
@@ -56,14 +80,14 @@ class CompletionContext {
         file_content = options.file_content;
         cursor_index = options.cursor_index;
 
-        compute_completion_index();
+        compute_info();
 
     } //new
 
-    function compute_completion_index():Void {
+    function compute_info():Void {
 
             // We only care about the text before index
-        var text = file_content.substr(0, cursor_index);
+        var text = Haxe.code_with_empty_comments_and_strings(file_content.substr(0, cursor_index));
 
             // Compute position info
         position_info = Haxe.parse_position_info(text, cursor_index);
@@ -117,5 +141,84 @@ class CompletionContext {
         }
 
     } //compute_info
+
+        /** Fetch completion data and return a promise. If data is already
+            fetched/fetching, returns the related promise instead of fetching
+            a second time. */
+    public function fetch(?previous_context:CompletionContext):Promise<CompletionContext> {
+
+            // Create fetch promise
+        if (fetch_promise == null) {
+
+            status = FETCHING;
+
+                // Check that we don't just need the same information as previous context
+            if (can_use_previous_context(previous_context)) {
+                    // If so, fetch info from it
+                fetch_promise = fetch_from_previous_context(previous_context);
+            }
+            else {
+                    // Otherwise perform "fresh" fetch
+                fetch_promise = new Promise<CompletionContext>(function(resolve, reject) {
+
+                        // TODO implement actual fetch
+                    suggestions = [];
+                    tooltip = null;
+                    compute_filtered_suggestions();
+
+                    status = FETCHED;
+
+                    resolve(this);
+
+                }); //Promise
+            }
+
+        }
+
+        return fetch_promise;
+
+    } //fetch
+
+    inline public function can_use_previous_context(previous_context:CompletionContext):Bool {
+
+        return previous_context != null
+            && previous_context.completion_index == completion_index
+            && previous_context.completion_kind == completion_kind;
+
+    } //can_use_previous_context
+
+    function fetch_from_previous_context(previous_context:CompletionContext):Promise<CompletionContext> {
+
+        return new Promise<CompletionContext>(function(resolve, reject) {
+
+            previous_context.fetch().then(function(previous_context) {
+
+                suggestions = previous_context.suggestions;
+                tooltip = previous_context.tooltip;
+
+                if (previous_context.prefix == prefix) {
+                    filtered_suggestions = previous_context.filtered_suggestions;
+                } else {
+                    compute_filtered_suggestions();
+                }
+
+                resolve(this);
+
+            }).catchError(function(error) {
+
+                reject(error);
+
+            }); //fetch
+
+        }); //Promise
+
+    } //fetch_from_previous_context
+
+    function compute_filtered_suggestions() {
+
+            // TODO implement filtering
+        filtered_suggestions = [].concat(suggestions);
+
+    } //compute_filtered_suggestions
 
 }
