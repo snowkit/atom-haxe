@@ -1,6 +1,6 @@
 -lib hxnodejs
--lib tides
--lib atom
+-cp ../git/tides
+-cp ../git/hxatom
 -main AtomHaxe
 -js ../lib/atom-haxe.js
 -debug
