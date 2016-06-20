@@ -92,7 +92,6 @@ class CompletionContext {
 
             // We only care about the text before index
         var text = Haxe.code_with_empty_comments_and_strings(file_content.substr(0, cursor_index));
-
             // Compute position info
         position_info = Haxe.parse_position_info(text, cursor_index);
 
@@ -224,7 +223,7 @@ class CompletionContext {
 
                     // At fetch result
                 if (status != CANCELED) {
-                    return;
+
                     status = FETCHED;
 
                     suggestions = previous_context.suggestions;
@@ -254,8 +253,6 @@ class CompletionContext {
     } //fetch_from_previous_context
 
     function cancel_fetch():Void {
-
-        trace('CANCEL FETCH');
 
         if (status == FETCHING) {
             status = CANCELED;
