@@ -5,6 +5,7 @@ import tides.parse.Haxe;
 import completion.Query;
 
 import utils.Promise;
+import utils.Fuzzaldrin;
 
 typedef CompletionContextOptions = {
 
