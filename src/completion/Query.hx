@@ -6,6 +6,8 @@ import utils.Log;
 import plugin.Plugin.haxe_server;
 import plugin.Plugin.state;
 
+import completion.QueryResult;
+
 typedef QueryOptions = {
 
     @:optional var byte:Int;
@@ -25,9 +27,9 @@ typedef QueryOptions = {
     /** Query haxe server/compiler to get completion about the code */
 class Query {
 
-    public static function run(options:QueryOptions):Promise<String> {
+    public static function run(options:QueryOptions):Promise<QueryResult> {
 
-        return new Promise<String>(function(resolve, reject) {
+        return new Promise<QueryResult>(function(resolve, reject) {
 
             var byte = options.byte != null ? options.byte : 0;
             var file = options.file != null ? options.file : '';
@@ -80,7 +82,7 @@ class Query {
 
             haxe_server.send(args, stdin).then(function(result) {
 
-                resolve(result);
+                resolve(new QueryResult(result));
 
             }).catchError(function(error) {
 

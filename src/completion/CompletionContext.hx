@@ -6,6 +6,9 @@ import completion.Query;
 
 import utils.Promise;
 import utils.Fuzzaldrin;
+import utils.Log;
+
+import js.node.Buffer;
 
 typedef CompletionContextOptions = {
 
@@ -59,9 +62,11 @@ class CompletionContext {
 
     public var completion_index(default,null):Int = -1;
 
+    public var completion_byte(default,null):Int = -1;
+
     public var completion_kind(default,null):CompletionKind = null;
 
-    public var position_info(default,null):HaxePositionInfo;
+    public var position_info(default,null):HaxeCursorInfo;
 
     public var prefix(default,null):String = '';
 
@@ -89,12 +94,14 @@ class CompletionContext {
 
     } //new
 
+/// Contextual info
+
     function compute_info():Void {
 
             // We only care about the text before index
         var text = Haxe.code_with_empty_comments_and_strings(file_content.substr(0, cursor_index));
             // Compute position info
-        position_info = Haxe.parse_position_info(text, cursor_index);
+        position_info = Haxe.parse_cursor_info(text, cursor_index);
 
         trace(position_info);
 
@@ -105,8 +112,6 @@ class CompletionContext {
                 completion_kind = DOT_PROPERTY;
 
             case FUNCTION_CALL:
-                completion_index = position_info.brace_start;
-                completion_kind = CALL_ARGUMENTS;
                 if (position_info.brace_start != null) {
                     completion_index = position_info.brace_start + 1;
                     if (position_info.partial_key != null) {
@@ -116,8 +121,12 @@ class CompletionContext {
                     }
 
                 } else {
-                    completion_index = position_info.paren_start + 1;
-                    completion_kind = TOP_LEVEL;
+                    if (position_info.identifier_start != null) {
+                        completion_index = position_info.identifier_start;
+                    } else {
+                        completion_index = position_info.paren_start + 1;
+                    }
+                    completion_kind = CALL_ARGUMENTS;
                 }
 
             case VARIABLE_ASSIGN:
@@ -130,12 +139,20 @@ class CompletionContext {
                     }
 
                 } else {
-                    completion_index = position_info.assign_start + 1;
+                    if (position_info.identifier_start != null) {
+                        completion_index = position_info.identifier_start;
+                    } else {
+                        completion_index = cursor_index;
+                    }
                     completion_kind = TOP_LEVEL;
                 }
 
             default:
-                completion_index = cursor_index; // TODO find "word_start"
+                if (position_info.identifier_start != null) {
+                    completion_index = position_info.identifier_start;
+                } else {
+                    completion_index = cursor_index;
+                }
                 completion_kind = TOP_LEVEL;
 
         }
@@ -144,7 +161,14 @@ class CompletionContext {
             prefix = text.substring(completion_index, cursor_index);
         }
 
+            // TODO remove/move node.js dependency
+        completion_byte = Buffer.byteLength(file_content.substr(0, completion_index), 'utf8');
+
+        trace('kind: ' + completion_kind + ' / index: ' + completion_index);
+
     } //compute_info
+
+/// Query fetching
 
         /** Fetch completion data and return a promise. If data is already
             fetched/fetching, returns the related promise instead of fetching
@@ -178,6 +202,33 @@ class CompletionContext {
                     fetch_reject = reject;
 
                     haxe.Timer.delay(function() {
+
+                        var options:QueryOptions = {
+                            file: file_path,
+                            stdin: file_content,
+                            byte: completion_byte
+                        };
+
+                        switch (completion_kind) {
+                            case TOP_LEVEL, STRUCTURE_KEY_VALUE, ASSIGN_VALUE:
+                                options.kind = 'toplevel';
+                            default:
+                        }
+
+                        Query.run(options)
+                        .then(function(result) {
+
+                            Log.debug(result);
+
+                        })
+                        .catchError(function(error) {
+
+                            Log.warn('No completion found');
+
+                            // TODO log server error, when
+                            // completion debug is enabled
+
+                        });
 
                             // TODO implement actual fetch
                         suggestions = [];
