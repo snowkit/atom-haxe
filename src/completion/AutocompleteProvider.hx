@@ -73,8 +73,6 @@ class AutocompleteProvider {
 
         Log.debug('Get suggestions...');
 
-        // TODO cancel previous request when running a new one
-
         return new Promise<Array<AutocompletePlusSuggestion>>(function(resolve, reject) {
 
             var buffer_pos = options.bufferPosition;
@@ -132,14 +130,14 @@ class AutocompleteProvider {
 
         var suggestions:Array<AutocompletePlusSuggestion> = [];
 
-        for (item in context.suggestions) {
+        for (item in context.filtered_suggestions) {
 
             var suggestion:AutocompletePlusSuggestion = {};
 
             suggestion.text = item.text;
             suggestion.snippet = item.snippet;
             suggestion.displayText = item.display_text;
-            suggestion.replacementPrefix = item.prefix;
+            suggestion.replacementPrefix = context.prefix;
             suggestion.type = item.type;
             suggestion.leftLabel = item.left_label;
             suggestion.rightLabel = item.right_label;

@@ -59,10 +59,6 @@ typedef Suggestion = {
         /** A string that will show in the UI for this suggestion. */
     @:optional var display_text:String;
 
-        /** The text immediately preceding the cursor, which
-            will be replace by the text. */
-    @:optional var prefix:String;
-
         /** The type of suggestion. May change the display in UI like
             adding an icon etc... */
     @:optional var type:String;
@@ -195,8 +191,9 @@ class CompletionContext {
 
         }
 
-        if (cursor_index > completion_index) {
-            prefix = text.substring(completion_index, cursor_index);
+        if (position_info.identifier_start != null && cursor_index > position_info.identifier_start) {
+            prefix = text.substring(position_info.identifier_start, cursor_index);
+            trace('cursor_index='+cursor_index + ' completion_index='+completion_index + ' prefix='+text.substring(position_info.identifier_start, cursor_index));
         }
 
             // TODO remove/move node.js dependency
@@ -366,8 +363,7 @@ class CompletionContext {
 
     function compute_filtered_suggestions() {
 
-            // TODO implement filtering
-        filtered_suggestions = [].concat(suggestions);
+        filtered_suggestions = Fuzzaldrin.filter(suggestions, prefix, {key: 'text'});
 
     } //compute_filtered_suggestions
 
@@ -400,7 +396,6 @@ class CompletionContext {
                         suggestion.display_text = item.name;
                         suggestion.right_label = Haxe.string_from_parsed_type(item.type);
                         suggestion.description = item.description;
-                        suggestion.prefix = prefix;
 
                         suggestions.push(suggestion);
 
