@@ -256,7 +256,17 @@ class CompletionContext {
                         Query.run(options)
                         .then(function(result) {
 
-                            Log.debug(result);
+                                // At fetch result/error
+                            if (status != CANCELED) {
+
+                                compute_suggestions_from_query_result(result);
+
+                                tooltip = null;
+                                compute_filtered_suggestions();
+
+                                status = FETCHED;
+                                resolve(this);
+                            }
 
                         })
                         .catchError(function(error) {
@@ -266,20 +276,15 @@ class CompletionContext {
                             // TODO log server error, when
                             // completion debug is enabled
 
+                                // At fetch result/error
+                            if (status != CANCELED) {
+                                status = BROKEN;
+                                reject('No completion found');
+                            }
+
                         });
 
-                            // TODO implement actual fetch
-                        suggestions = [];
-                        tooltip = null;
-                        compute_filtered_suggestions();
-
-                            // At fetch result/error
-                        if (status != CANCELED) {
-                            status = FETCHED;
-                            resolve(this);
-                        }
-
-                    }, 0);
+                    }, 0); // Explicit delay to ensure the order of context completion/cancelation
 
                 }); //Promise
             }
@@ -365,5 +370,48 @@ class CompletionContext {
         filtered_suggestions = [].concat(suggestions);
 
     } //compute_filtered_suggestions
+
+/// Suggestions
+
+    function compute_suggestions_from_query_result(result:QueryResult):Void {
+
+        suggestions = [];
+
+        if (result.kind == LIST) {
+
+            for (item_ in result.parsed_list) {
+
+                switch (item_.kind) {
+                    case VARIABLE,
+                         METHOD,
+                         PACKAGE,
+                         LOCAL,
+                         GLOBAL,
+                         MEMBER,
+                         STATIC,
+                         TYPE,
+                         ENUM,
+                         VALUE:
+
+                        var item:QueryResultListCompletionItem = cast item_;
+
+                        var suggestion:Suggestion = {};
+                        suggestion.text = item.name;
+                        suggestion.display_text = item.name;
+                        suggestion.right_label = Haxe.string_from_parsed_type(item.type);
+                        suggestion.description = item.description;
+                        suggestion.prefix = prefix;
+
+                        suggestions.push(suggestion);
+
+                    case POSITION:
+                        // Nothing to do
+                }
+
+            }
+
+        }
+
+    } //compute_suggestions_from_query_result
 
 }

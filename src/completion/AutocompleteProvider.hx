@@ -32,7 +32,31 @@ typedef GetSuggestionsOptions = {
 
 typedef AutocompletePlusSuggestion = {
 
+    @:optional var text:String;
 
+    @:optional var snippet:String;
+
+    @:optional var displayText:String;
+
+    @:optional var replacementPrefix:String;
+
+    @:optional var type:String;
+
+    @:optional var leftLabel:String;
+
+    @:optional var leftLabelHTML:String;
+
+    @:optional var rightLabel:String;
+
+    @:optional var rightLabelHTML:String;
+
+    @:optional var className:String;
+
+    @:optional var iconHTML:String;
+
+    @:optional var description:String;
+
+    @:optional var descriptionMoreURL:String;
 
 } //Suggestion
 
@@ -51,7 +75,7 @@ class AutocompleteProvider {
 
         // TODO cancel previous request when running a new one
 
-        return new Promise<Array<Suggestion>>(function(resolve, reject) {
+        return new Promise<Array<AutocompletePlusSuggestion>>(function(resolve, reject) {
 
             var buffer_pos = options.bufferPosition;
             var text_before_cursor = options.editor.getTextInBufferRange(new Range(new Point(0,0), buffer_pos));
@@ -69,7 +93,7 @@ class AutocompleteProvider {
 
                 Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Tooltip: ' + context.tooltip);
 
-                resolve([]);
+                resolve(convert_suggestions(context));
 
             }).catchError(function(error) {
 
@@ -102,5 +126,32 @@ class AutocompleteProvider {
         }); //Promise
 
     } //get_suggestions
+
+        /** Get autocomplete-plus suggestions from completion context's suggestions */
+    function convert_suggestions(context:CompletionContext):Array<AutocompletePlusSuggestion> {
+
+        var suggestions:Array<AutocompletePlusSuggestion> = [];
+
+        for (item in context.suggestions) {
+
+            var suggestion:AutocompletePlusSuggestion = {};
+
+            suggestion.text = item.text;
+            suggestion.snippet = item.snippet;
+            suggestion.displayText = item.display_text;
+            suggestion.replacementPrefix = item.prefix;
+            suggestion.type = item.type;
+            suggestion.leftLabel = item.left_label;
+            suggestion.rightLabel = item.right_label;
+            suggestion.description = item.description;
+            suggestion.descriptionMoreURL = item.url;
+
+            suggestions.push(suggestion);
+
+        }
+
+        return suggestions;
+
+    } //convert_suggestions
 
 } //AutocompleteProvider
