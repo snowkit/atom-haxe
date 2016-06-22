@@ -45,7 +45,7 @@ atom-overlay {
 
 // Fixing up linter overlay for us
 // In order to be able to display multiline messages
-atom-text-editor[data-grammar="source haxe"] {
+atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
     atom-overlay {
         .linter-list {
             .linter-content {
@@ -59,55 +59,11 @@ atom-text-editor[data-grammar="source haxe"] {
 }
 
 // Fixing up truncated right label
-atom-text-editor[data-grammar="source haxe"] {
+atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
     atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list .right-label {
         max-width: none;
     }
     atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list .left-label {
         max-width: none;
-    }
-}
-
-// Type-hinting suggestion
-// or Error as suggestion
-atom-text-editor[data-grammar="source haxe"] {
-    atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list.select-list.popover-list {
-        .haxe-autocomplete-suggestion-type-hint,
-        .haxe-autocomplete-suggestion-type-hint.selected,
-        .haxe-autocomplete-suggestion-error,
-        .haxe-autocomplete-suggestion-error.selected {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-
-            .word {
-                display: none;
-            }
-
-            .selected {
-                background-color: transparent;
-            }
-
-            .completion-label, .right-label {
-                float: left;
-                font-size: 12px;
-                width: 100%;
-                text-align: center;
-                margin: 2px 0 0 0;
-                padding: 0 5px;
-                position: relative;
-                left: -4px;
-                top: 0;
-
-                .current-argument {
-                    font-weight: bold;
-                    color: white;
-                }
-            }
-        }
-
-        .haxe-autocomplete-suggestion-error .completion-label, .haxe-autocomplete-suggestion-error .right-label {
-            color: #c40000;
-        }
     }
 }

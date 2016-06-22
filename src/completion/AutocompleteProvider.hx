@@ -2,6 +2,7 @@ package completion;
 
 import utils.CancellationToken;
 import utils.Promise;
+import utils.HTML;
 
 import completion.Query;
 import completion.CompletionContext;
@@ -138,9 +139,8 @@ class AutocompleteProvider {
             suggestion.snippet = item.snippet;
             suggestion.displayText = item.display_text;
             suggestion.replacementPrefix = context.prefix;
-            suggestion.type = item.type;
-            suggestion.leftLabel = item.left_label;
-            suggestion.rightLabel = item.right_label;
+            suggestion.type = item.kind;
+            suggestion.rightLabel = item.type;
             suggestion.description = item.description;
             suggestion.descriptionMoreURL = item.url;
 

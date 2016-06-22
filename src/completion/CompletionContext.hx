@@ -59,15 +59,12 @@ typedef Suggestion = {
         /** A string that will show in the UI for this suggestion. */
     @:optional var display_text:String;
 
-        /** The type of suggestion. May change the display in UI like
+        /** The kind of suggestion. May change the display in UI like
             adding an icon etc... */
+    @:optional var kind:String;
+
+        /** Type: text usually displayed after the suggestion. */
     @:optional var type:String;
-
-        /** Text displayed before the suggestion. */
-    @:optional var left_label:String;
-
-        /** Text displayed after the suggestion. */
-    @:optional var right_label:String;
 
         /** Additional description/documentation to be displayed. */
     @:optional var description:String;
@@ -272,6 +269,7 @@ class CompletionContext {
 
                             // TODO log server error, when
                             // completion debug is enabled
+                            Log.error(error);
 
                                 // At fetch result/error
                             if (status != CANCELED) {
@@ -392,10 +390,106 @@ class CompletionContext {
                         var item:QueryResultListCompletionItem = cast item_;
 
                         var suggestion:Suggestion = {};
-                        suggestion.text = item.name;
-                        suggestion.display_text = item.name;
-                        suggestion.right_label = Haxe.string_from_parsed_type(item.type);
+
+                            // Type
+                        var is_function = false;
+                        if (item.type != null) {
+                            if (item.type.args != null) {
+                                is_function = true;
+                                suggestion.type = Haxe.string_from_parsed_type(item.type.composed_type);
+                            }
+                            else {
+                                suggestion.type = Haxe.string_from_parsed_type(item.type);
+                            }
+                        }
+
+                            // Snippet/text
+                        if (is_function) {
+                            var dumped_args = [];
+                            var number_of_chars = item.name.length;
+                            var j = 0;
+                            for (arg in item.type.args) {
+                                var arg = item.type.args[j];
+                                var arg_str = '';
+                                if (arg != null) {
+                                    if (arg.name != null) {
+                                        arg_str += arg.name;
+                                    }
+                                    else {
+                                        arg_str += 'arg' + (j+1);
+                                    }
+
+                                    if (arg.optional) {
+                                        arg_str = '?' + arg_str;
+                                    }
+
+                                    number_of_chars += arg_str.length + 2;
+                                    if (number_of_chars > 80) {
+                                        arg_str = arg_str.substring(0, arg_str.length - number_of_chars + 82);
+                                        if (arg_str.length > 2) {
+                                                // Strip the argument completely when only 2 characters ar left
+                                                // Otherwise, it would look too ugly
+                                            arg_str += '\u2026';
+                                        }
+                                        else {
+                                            arg_str = '\u2026';
+                                        }
+                                    }
+
+                                    arg_str = '$'+'{' + (j + 1) + ':' + arg_str + '}';
+                                }
+                                dumped_args.push(arg_str);
+
+                                    // If there are too many arguments in list, don't display all of them
+                                if (number_of_chars > 40) {
+                                    break;
+                                }
+
+                                j++;
+                            }
+
+                            if (dumped_args.length > 0) {
+                                suggestion.snippet = item.name + '(' + dumped_args.join(', ') + ')';
+                            } else {
+                                suggestion.text = item.name + '()';
+                            }
+                        }
+                        else {
+                            suggestion.text = item.name;
+                        }
+
                         suggestion.description = item.description;
+
+                        switch(item.kind) {
+                            case VARIABLE:
+                                suggestion.kind = 'property';
+                            case METHOD:
+                                suggestion.kind = 'method';
+                            case PACKAGE:
+                                suggestion.kind = 'package';
+                            case LOCAL:
+                                    // Let's assume full uppercase is constant
+                                if (item.name.toUpperCase() == item.name) {
+                                    suggestion.kind = 'constant';
+                                } else {
+                                    suggestion.kind = 'variable';
+                                }
+                            case GLOBAL:
+                                suggestion.kind = 'value';
+                            case MEMBER:
+                                suggestion.kind = 'property';
+                            case STATIC:
+                                suggestion.kind = 'property';
+                            case TYPE:
+                                suggestion.kind = 'type';
+                            case ENUM:
+                                suggestion.kind = 'constant';
+                            default:
+                                suggestion.kind = 'value';
+
+                            // TODO choose more accurate types by looking
+                            //      at the composed type, when needed
+                        }
 
                         suggestions.push(suggestion);
 

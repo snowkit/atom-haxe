@@ -12,10 +12,9 @@ enum QueryResultKind {
 }
 
 enum QueryResultListItemKind {
-        // Type path
+
     VARIABLE;
     METHOD;
-        // Top level
     PACKAGE;
     LOCAL;
     GLOBAL;
@@ -24,7 +23,7 @@ enum QueryResultListItemKind {
     TYPE;
     ENUM;
     VALUE;
-        // Position
+
     POSITION;
 }
 
@@ -84,6 +83,8 @@ class QueryResult {
 
         var nodeName = xml.nodeName;
 
+
+        trace(xml.toString());
         switch(nodeName) {
 
             case 'type':
@@ -102,6 +103,10 @@ class QueryResult {
                             item.kind = VARIABLE;
                         case 'method':
                             item.kind = METHOD;
+                        case 'type':
+                            item.kind = TYPE;
+                        case 'package':
+                            item.kind = PACKAGE;
                         default:
                             item.kind = VALUE;
                     }
@@ -155,6 +160,8 @@ class QueryResult {
                             item.kind = GLOBAL;
                         case 'type':
                             item.kind = TYPE;
+                        case 'package':
+                            item.kind = PACKAGE;
                         default:
                             item.kind = VALUE;
                     }
