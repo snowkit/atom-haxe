@@ -69,9 +69,13 @@ class AutocompleteProvider {
 
                 Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Tooltip: ' + context.tooltip);
 
+                resolve([]);
+
             }).catchError(function(error) {
 
                 Log.error(error);
+
+                resolve([]);
 
             }); //fetch
 
