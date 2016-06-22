@@ -8,6 +8,7 @@ using StringTools;
 enum QueryResultKind {
     TYPE;
     LIST;
+    UNKNOWN;
 }
 
 enum QueryResultListItemKind {
@@ -176,6 +177,7 @@ class QueryResult {
                 }
 
             default:
+                kind = UNKNOWN;
                 Log.warn('Unknown completion result');
         }
 
