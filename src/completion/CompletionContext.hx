@@ -3,6 +3,7 @@ package completion;
 import tides.parse.Haxe;
 
 import completion.Query;
+import completion.QueryResult;
 
 import utils.Promise;
 import utils.Fuzzaldrin;
@@ -42,9 +43,46 @@ enum CompletionStatus {
     BROKEN;
 }
 
+    /** Suggestion object. Mainly inspired from atom's autocomplete-plus
+        suggestion format, but should ideally provide all the
+        required data for any code completion/IDE API. */
 typedef Suggestion = {
 
-}
+        /** A snippet string. This will allow users to tab through
+            function arguments or other options. */
+    @:optional var snippet:String;
+
+        /** The text which will be inserted into the editor,
+            in place of the prefix */
+    @:optional var text:String;
+
+        /** A string that will show in the UI for this suggestion. */
+    @:optional var display_text:String;
+
+        /** The text immediately preceding the cursor, which
+            will be replace by the text. */
+    @:optional var prefix:String;
+
+        /** The type of suggestion. May change the display in UI like
+            adding an icon etc... */
+    @:optional var type:String;
+
+        /** Text displayed before the suggestion. */
+    @:optional var left_label:String;
+
+        /** Text displayed after the suggestion. */
+    @:optional var right_label:String;
+
+        /** Additional description/documentation to be displayed. */
+    @:optional var description:String;
+
+        /** Url to read further documentation. */
+    @:optional var url:String;
+
+        /** Related haxe query result item, if any. */
+    @:optional var query_result_item:QueryResultListItem;
+
+} //Suggestion
 
     /** Current completion context: file contents, cursor position...
         and related utilities to provide additional info. */
