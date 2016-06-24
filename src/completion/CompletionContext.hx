@@ -497,7 +497,7 @@ class CompletionContext {
                         }
 
                             // Add key for scoring
-                        untyped suggestion.key = suggestion.snippet != null ? suggestion.snippet
+                        untyped suggestion.key = suggestion.snippet != null ? suggestion.snippet : suggestion.text;
 
                         suggestions.push(suggestion);
 
