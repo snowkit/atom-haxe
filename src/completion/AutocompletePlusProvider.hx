@@ -62,7 +62,7 @@ typedef AutocompletePlusSuggestion = {
 } //Suggestion
 
     /** Provide code completion to atom's autocomplete-plus plugin */
-class AutocompleteProvider {
+class AutocompletePlusProvider {
 
     var context:CompletionContext = null;
 
@@ -94,7 +94,7 @@ class AutocompleteProvider {
                     context.position_info.dot_start != null ||
                     context.position_info.identifier_start != null) {
 
-                    Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Hint: ' + context.hint);
+                    Log.success('Suggestions: ' + context.filtered_suggestions.length);
                     resolve(convert_suggestions(context));
                 }
                 else {

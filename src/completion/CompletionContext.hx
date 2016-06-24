@@ -101,8 +101,6 @@ class CompletionContext {
 
     public var prefix(default,null):String = '';
 
-    public var hint(default,null):String;
-
     public var suggestions(default,null):Array<Suggestion>;
 
     public var filtered_suggestions(default,null):Array<Suggestion>;
@@ -252,30 +250,10 @@ class CompletionContext {
 
                                 compute_suggestions_from_query_result(result);
 
-                                hint = null;
                                 compute_filtered_suggestions();
 
-                                    // Shoult we compute hint / type hint?
-                                if (should_compute_hint()) {
-                                    compute_hint().then(function(context) {
-                                            // Resolve with hint
-                                        if (status != CANCELED) {
-                                            status = FETCHED;
-                                            resolve(this);
-                                        }
-                                    })
-                                    .catchError(function(error) {
-                                            // Still resolve, even without hint
-                                        if (status != CANCELED) {
-                                            status = FETCHED;
-                                            resolve(this);
-                                        }
-                                    });
-
-                                } else {
-                                    status = FETCHED;
-                                    resolve(this);
-                                }
+                                status = FETCHED;
+                                resolve(this);
                             }
 
                         })
@@ -333,7 +311,6 @@ class CompletionContext {
                     status = FETCHED;
 
                     suggestions = previous_context.suggestions;
-                    hint = previous_context.hint;
 
                     if (previous_context.prefix == prefix) {
                         filtered_suggestions = previous_context.filtered_suggestions;
@@ -529,25 +506,5 @@ class CompletionContext {
         }
 
     } //compute_suggestions_from_query_result
-
-/// Tooltip
-
-    function should_compute_hint():Bool {
-
-        return completion_kind == CALL_ARGUMENTS;
-
-    } //should_compute_hint
-
-    function compute_hint():Promise<CompletionContext> {
-
-        return new Promise<CompletionContext>(function(resolve, reject) {
-
-            // TODO implement
-
-            resolve(this);
-
-        }); // Promise
-
-    } //compute_hint
 
 }

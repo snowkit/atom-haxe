@@ -14,7 +14,7 @@ import utils.Promise;
 import server.HaxeServer;
 
 import completion.Query;
-import completion.AutocompleteProvider;
+import completion.AutocompletePlusProvider;
 
 import js.Node.require;
 import js.node.Path;
@@ -267,7 +267,7 @@ class Plugin {
 
     private static function get_autocomplete_provider():Dynamic {
 
-        var autocomplete_provider = new AutocompleteProvider();
+        var autocomplete_provider = new AutocompletePlusProvider();
 
         return {
             selector: '.source.haxe, .source.hx',

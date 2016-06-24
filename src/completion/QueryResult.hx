@@ -83,8 +83,6 @@ class QueryResult {
 
         var nodeName = xml.nodeName;
 
-
-        trace(xml.toString());
         switch(nodeName) {
 
             case 'type':
