@@ -239,7 +239,7 @@ class CompletionContext {
                         };
 
                         switch (completion_kind) {
-                            case TOP_LEVEL, STRUCTURE_KEY_VALUE, ASSIGN_VALUE:
+                            case TOP_LEVEL, STRUCTURE_KEY_VALUE, ASSIGN_VALUE, CALL_ARGUMENTS:
                                 options.kind = 'toplevel';
                             default:
                         }
@@ -255,8 +255,27 @@ class CompletionContext {
                                 tooltip = null;
                                 compute_filtered_suggestions();
 
-                                status = FETCHED;
-                                resolve(this);
+                                    // Shoult we compute tooltip / type hint?
+                                if (should_compute_tooltip()) {
+                                    compute_tooltip().then(function(context) {
+                                            // Resolve with tooltip
+                                        if (status != CANCELED) {
+                                            status = FETCHED;
+                                            resolve(this);
+                                        }
+                                    })
+                                    .catchError(function(error) {
+                                            // Still resolve, even without tooltip
+                                        if (status != CANCELED) {
+                                            status = FETCHED;
+                                            resolve(this);
+                                        }
+                                    });
+
+                                } else {
+                                    status = FETCHED;
+                                    resolve(this);
+                                }
                             }
 
                         })
@@ -484,7 +503,7 @@ class CompletionContext {
                             case MEMBER:
                                 suggestion.kind = 'property';
                             case STATIC:
-                                suggestion.kind = 'property';
+                                suggestion.kind = 'static';
                             case TYPE:
                                 suggestion.kind = 'type';
                             case ENUM:
@@ -510,5 +529,25 @@ class CompletionContext {
         }
 
     } //compute_suggestions_from_query_result
+
+/// Tooltip
+
+    function should_compute_tooltip():Bool {
+
+        return completion_kind == CALL_ARGUMENTS;
+
+    } //should_compute_tooltip
+
+    function compute_tooltip():Promise<CompletionContext> {
+
+        return new Promise<CompletionContext>(function(resolve, reject) {
+
+            // TODO implement
+
+            resolve(this);
+
+        }); // Promise
+
+    } //compute_tooltip
 
 }
