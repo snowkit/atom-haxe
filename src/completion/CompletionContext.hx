@@ -447,10 +447,8 @@ class CompletionContext {
 
                             if (dumped_args.length > 0) {
                                 suggestion.snippet = item.name + '(' + dumped_args.join(', ') + ')';
-                                untyped suggestion.key = suggestion.snippet;
                             } else {
                                 suggestion.text = item.name + '()';
-                                untyped suggestion.key = suggestion.text;
                             }
                         }
                         else {
@@ -497,6 +495,9 @@ class CompletionContext {
                             // TODO choose more accurate types by looking
                             //      at the composed type, when needed
                         }
+
+                            // Add key for scoring
+                        untyped suggestion.key = suggestion.snippet != null ? suggestion.snippet
 
                         suggestions.push(suggestion);
 
