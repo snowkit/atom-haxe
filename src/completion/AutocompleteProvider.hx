@@ -111,26 +111,6 @@ class AutocompleteProvider {
 
             }); //fetch
 
-/*
-            Query.run({
-                file: options.editor.getBuffer().file.path,
-                stdin: text,
-                byte: Buffer.byteLength(text_before_cursor, 'utf8')
-            })
-            .then(function(result) {
-
-                Log.debug(result);
-
-            })
-            .catchError(function(error) {
-
-                Log.warn('No completion found');
-
-                // TODO log server error, when
-                // completion debug is enabled
-
-            });*/
-
         }); //Promise
 
     } //get_suggestions
