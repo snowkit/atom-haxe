@@ -266,7 +266,7 @@ class CompletionContext {
 
                             // TODO log server error, when
                             // completion debug is enabled
-                            Log.error(error);
+                            //Log.error(error);
 
                                 // At fetch result/error
                             if (status != CANCELED) {

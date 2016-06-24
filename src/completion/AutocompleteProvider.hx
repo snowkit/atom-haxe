@@ -90,9 +90,18 @@ class AutocompleteProvider {
 
             context.fetch(previous_context).then(function(context:CompletionContext) {
 
-                Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Tooltip: ' + context.tooltip);
+                if (options.activatedManually ||
+                    context.position_info.dot_start != null ||
+                    context.position_info.identifier_start != null) {
 
-                resolve(convert_suggestions(context));
+                    Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Tooltip: ' + context.tooltip);
+                    resolve(convert_suggestions(context));
+                }
+                else {
+
+                    Log.debug('Valid context but better not to display it yet');
+                    resolve([]);
+                }
 
             }).catchError(function(error) {
 
