@@ -125,7 +125,7 @@ class Fuzzaldrin {
 
                 // Same case bonus.
             if (string.charAt(index_in_string) == character) {
-                character_score += 0.1;
+                character_score += 0.2;
             }
 
             if (index_in_string == 0) {
