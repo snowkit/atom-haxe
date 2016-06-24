@@ -101,7 +101,7 @@ class CompletionContext {
 
     public var prefix(default,null):String = '';
 
-    public var tooltip(default,null):String;
+    public var hint(default,null):String;
 
     public var suggestions(default,null):Array<Suggestion>;
 
@@ -252,20 +252,20 @@ class CompletionContext {
 
                                 compute_suggestions_from_query_result(result);
 
-                                tooltip = null;
+                                hint = null;
                                 compute_filtered_suggestions();
 
-                                    // Shoult we compute tooltip / type hint?
-                                if (should_compute_tooltip()) {
-                                    compute_tooltip().then(function(context) {
-                                            // Resolve with tooltip
+                                    // Shoult we compute hint / type hint?
+                                if (should_compute_hint()) {
+                                    compute_hint().then(function(context) {
+                                            // Resolve with hint
                                         if (status != CANCELED) {
                                             status = FETCHED;
                                             resolve(this);
                                         }
                                     })
                                     .catchError(function(error) {
-                                            // Still resolve, even without tooltip
+                                            // Still resolve, even without hint
                                         if (status != CANCELED) {
                                             status = FETCHED;
                                             resolve(this);
@@ -333,7 +333,7 @@ class CompletionContext {
                     status = FETCHED;
 
                     suggestions = previous_context.suggestions;
-                    tooltip = previous_context.tooltip;
+                    hint = previous_context.hint;
 
                     if (previous_context.prefix == prefix) {
                         filtered_suggestions = previous_context.filtered_suggestions;
@@ -532,13 +532,13 @@ class CompletionContext {
 
 /// Tooltip
 
-    function should_compute_tooltip():Bool {
+    function should_compute_hint():Bool {
 
         return completion_kind == CALL_ARGUMENTS;
 
-    } //should_compute_tooltip
+    } //should_compute_hint
 
-    function compute_tooltip():Promise<CompletionContext> {
+    function compute_hint():Promise<CompletionContext> {
 
         return new Promise<CompletionContext>(function(resolve, reject) {
 
@@ -548,6 +548,6 @@ class CompletionContext {
 
         }); // Promise
 
-    } //compute_tooltip
+    } //compute_hint
 
 }

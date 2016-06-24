@@ -94,7 +94,7 @@ class AutocompleteProvider {
                     context.position_info.dot_start != null ||
                     context.position_info.identifier_start != null) {
 
-                    Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Tooltip: ' + context.tooltip);
+                    Log.success('Suggestions: ' + context.filtered_suggestions.length + ', Hint: ' + context.hint);
                     resolve(convert_suggestions(context));
                 }
                 else {
