@@ -134,7 +134,7 @@ class CompletionContext {
             // Compute position info
         position_info = Haxe.parse_cursor_info(text, cursor_index);
 
-        trace(position_info);
+        Log.debug(position_info);
 
         switch (position_info.kind) {
 
@@ -190,13 +190,10 @@ class CompletionContext {
 
         if (position_info.identifier_start != null && cursor_index > position_info.identifier_start) {
             prefix = text.substring(position_info.identifier_start, cursor_index);
-            trace('cursor_index='+cursor_index + ' completion_index='+completion_index + ' prefix='+text.substring(position_info.identifier_start, cursor_index));
         }
 
             // TODO remove/move node.js dependency
         completion_byte = Buffer.byteLength(file_content.substr(0, completion_index), 'utf8');
-
-        trace('kind: ' + completion_kind + ' / index: ' + completion_index);
 
     } //compute_info
 
@@ -361,7 +358,7 @@ class CompletionContext {
 
     function compute_filtered_suggestions() {
 
-        filtered_suggestions = Fuzzaldrin.filter(suggestions, prefix, {key: 'text'});
+        filtered_suggestions = Fuzzaldrin.filter(suggestions, prefix, {key: 'key'});
 
     } //compute_filtered_suggestions
 
@@ -450,8 +447,10 @@ class CompletionContext {
 
                             if (dumped_args.length > 0) {
                                 suggestion.snippet = item.name + '(' + dumped_args.join(', ') + ')';
+                                untyped suggestion.key = suggestion.snippet;
                             } else {
                                 suggestion.text = item.name + '()';
+                                untyped suggestion.key = suggestion.text;
                             }
                         }
                         else {
@@ -468,14 +467,22 @@ class CompletionContext {
                             case PACKAGE:
                                 suggestion.kind = 'package';
                             case LOCAL:
-                                    // Let's assume full uppercase is constant
-                                if (item.name.toUpperCase() == item.name) {
-                                    suggestion.kind = 'constant';
+                                if (is_function) {
+                                    suggestion.kind = 'function';
                                 } else {
-                                    suggestion.kind = 'variable';
+                                        // Let's assume full uppercase is constant
+                                    if (item.name.toUpperCase() == item.name) {
+                                        suggestion.kind = 'constant';
+                                    } else {
+                                        suggestion.kind = 'variable';
+                                    }
                                 }
                             case GLOBAL:
-                                suggestion.kind = 'value';
+                                if (is_function) {
+                                    suggestion.kind = 'function';
+                                } else {
+                                    suggestion.kind = 'value';
+                                }
                             case MEMBER:
                                 suggestion.kind = 'property';
                             case STATIC:

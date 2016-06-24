@@ -144,7 +144,7 @@ class Fuzzaldrin {
         }
 
         var query_score = total_character_score / query_length;
-        return ((query_score * (query_length / string_length)) + query_score) / 2;
+        return (query_score * (query_length / string_length) + query_score) / 2;
 
     } //compute_score
 
