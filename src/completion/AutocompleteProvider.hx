@@ -128,7 +128,14 @@ class AutocompleteProvider {
             suggestion.snippet = item.snippet;
             suggestion.displayText = item.display_text;
             suggestion.replacementPrefix = context.prefix;
-            suggestion.type = item.kind;
+
+            if (item.kind == 'static') {
+                suggestion.type = 'property';
+                suggestion.iconHTML = '<span class="icon-letter">s</span>';
+            } else {
+                suggestion.type = item.kind;
+            }
+
             suggestion.rightLabel = item.type;
             suggestion.description = item.description;
             suggestion.descriptionMoreURL = item.url;
