@@ -11,75 +11,9 @@ import utils.Log;
 
 import js.node.Buffer;
 
-typedef CompletionContextOptions = {
-
-    var file_path:String;
-
-    var file_content:String;
-
-    var cursor_index:Int;
-
-} //CompletionContextOptions
-
-    /** Every possible kinds of completion. This enum doesn't
-        necessarily reflect what is possible with haxe compiler/server queries.
-        Plugin could decide to use or not use the haxe compiler depending
-        on the completion kind at the current position. */
-enum CompletionKind {
-    DOT_PACKAGE;
-    DOT_PROPERTY;
-    STRUCTURE_KEYS;
-    STRUCTURE_KEY_VALUE;
-    ASSIGN_VALUE;
-    CALL_ARGUMENTS;
-    TOP_LEVEL;
-}
-
-enum CompletionStatus {
-    NONE;
-    FETCHING;
-    FETCHED;
-    CANCELED;
-    BROKEN;
-}
-
-    /** Suggestion object. Mainly inspired from atom's autocomplete-plus
-        suggestion format, but should ideally provide all the
-        required data for any code completion/IDE API. */
-typedef Suggestion = {
-
-        /** A snippet string. This will allow users to tab through
-            function arguments or other options. */
-    @:optional var snippet:String;
-
-        /** The text which will be inserted into the editor,
-            in place of the prefix */
-    @:optional var text:String;
-
-        /** A string that will show in the UI for this suggestion. */
-    @:optional var display_text:String;
-
-        /** The kind of suggestion. May change the display in UI like
-            adding an icon etc... */
-    @:optional var kind:String;
-
-        /** Type: text usually displayed after the suggestion. */
-    @:optional var type:String;
-
-        /** Additional description/documentation to be displayed. */
-    @:optional var description:String;
-
-        /** Url to read further documentation. */
-    @:optional var url:String;
-
-        /** Related haxe query result item, if any. */
-    @:optional var query_result_item:QueryResultListItem;
-
-} //Suggestion
-
-    /** Current completion context: file contents, cursor position...
-        and related utilities to provide additional info. */
-class CompletionContext {
+    /** Current suggestions context from file contents and position.
+        TODO Move to tides eventually? */
+class SuggestionsContext {
 
 /// Initial info
 
@@ -95,7 +29,7 @@ class CompletionContext {
 
     public var completion_byte(default,null):Int = -1;
 
-    public var completion_kind(default,null):CompletionKind = null;
+    public var suggestions_kind(default,null):SuggestionsKind = null;
 
     public var position_info(default,null):HaxeCursorInfo;
 
@@ -107,13 +41,13 @@ class CompletionContext {
 
 /// State
 
-    public var status:CompletionStatus = NONE;
+    public var status:SuggestionsStatus = NONE;
 
-    var fetch_promise:Promise<CompletionContext> = null;
+    var fetch_promise:Promise<SuggestionsContext> = null;
 
     var fetch_reject:String->Void = null;
 
-    public function new(options:CompletionContextOptions) {
+    public function new(options:SuggestionsContextOptions) {
 
         file_path = options.file_path;
         file_content = options.file_content;
@@ -128,7 +62,7 @@ class CompletionContext {
     function compute_info():Void {
 
             // We only care about the text before index
-        var text = Haxe.code_with_empty_comments_and_strings(file_content.substr(0, cursor_index));
+        var text = file_content.substr(0, cursor_index);
             // Compute position info
         position_info = Haxe.parse_cursor_info(text, cursor_index);
 
@@ -138,15 +72,15 @@ class CompletionContext {
 
             case DOT_ACCESS:
                 completion_index = position_info.dot_start + 1;
-                completion_kind = DOT_PROPERTY;
+                suggestions_kind = DOT_PROPERTY;
 
             case FUNCTION_CALL:
                 if (position_info.brace_start != null) {
                     completion_index = position_info.brace_start + 1;
                     if (position_info.partial_key != null) {
-                        completion_kind = STRUCTURE_KEYS;
+                        suggestions_kind = STRUCTURE_KEYS;
                     } else {
-                        completion_kind = STRUCTURE_KEY_VALUE;
+                        suggestions_kind = STRUCTURE_KEY_VALUE;
                     }
 
                 } else {
@@ -155,16 +89,16 @@ class CompletionContext {
                     } else {
                         completion_index = position_info.paren_start + 1;
                     }
-                    completion_kind = CALL_ARGUMENTS;
+                    suggestions_kind = CALL_ARGUMENTS;
                 }
 
             case VARIABLE_ASSIGN:
                 if (position_info.brace_start != null) {
                     completion_index = position_info.brace_start + 1;
                     if (position_info.partial_key != null) {
-                        completion_kind = STRUCTURE_KEYS;
+                        suggestions_kind = STRUCTURE_KEYS;
                     } else {
-                        completion_kind = STRUCTURE_KEY_VALUE;
+                        suggestions_kind = STRUCTURE_KEY_VALUE;
                     }
 
                 } else {
@@ -173,7 +107,7 @@ class CompletionContext {
                     } else {
                         completion_index = cursor_index;
                     }
-                    completion_kind = TOP_LEVEL;
+                    suggestions_kind = TOP_LEVEL;
                 }
 
             default:
@@ -182,7 +116,7 @@ class CompletionContext {
                 } else {
                     completion_index = cursor_index;
                 }
-                completion_kind = TOP_LEVEL;
+                suggestions_kind = TOP_LEVEL;
 
         }
 
@@ -200,7 +134,7 @@ class CompletionContext {
         /** Fetch completion data and return a promise. If data is already
             fetched/fetching, returns the related promise instead of fetching
             a second time. */
-    public function fetch(?previous_context:CompletionContext):Promise<CompletionContext> {
+    public function fetch(?previous_context:SuggestionsContext):Promise<SuggestionsContext> {
 
             // Create fetch promise
         if (fetch_promise == null) {
@@ -219,7 +153,7 @@ class CompletionContext {
                 }
 
                     // Otherwise perform "fresh" fetch
-                fetch_promise = new Promise<CompletionContext>(function(resolve, reject) {
+                fetch_promise = new Promise<SuggestionsContext>(function(resolve, reject) {
 
                     if (status == CANCELED) {
                         reject("Fetch was canceled");
@@ -236,7 +170,7 @@ class CompletionContext {
                             byte: completion_byte
                         };
 
-                        switch (completion_kind) {
+                        switch (suggestions_kind) {
                             case TOP_LEVEL, STRUCTURE_KEY_VALUE, ASSIGN_VALUE, CALL_ARGUMENTS:
                                 options.kind = 'toplevel';
                             default:
@@ -284,17 +218,17 @@ class CompletionContext {
 
     } //fetch
 
-    function can_use_previous_context(previous_context:CompletionContext):Bool {
+    function can_use_previous_context(previous_context:SuggestionsContext):Bool {
 
         return previous_context != null
             && previous_context.completion_index == completion_index
-            && previous_context.completion_kind == completion_kind;
+            && previous_context.suggestions_kind == suggestions_kind;
 
     } //can_use_previous_context
 
-    function fetch_from_previous_context(previous_context:CompletionContext):Promise<CompletionContext> {
+    function fetch_from_previous_context(previous_context:SuggestionsContext):Promise<SuggestionsContext> {
 
-        return new Promise<CompletionContext>(function(resolve, reject) {
+        return new Promise<SuggestionsContext>(function(resolve, reject) {
 
             if (status == CANCELED) {
                 reject("Fetch was canceled");
@@ -508,3 +442,69 @@ class CompletionContext {
     } //compute_suggestions_from_query_result
 
 }
+
+typedef SuggestionsContextOptions = {
+
+    var file_path:String;
+
+    var file_content:String;
+
+    var cursor_index:Int;
+
+} //SuggestionsContextOptions
+
+    /** Every possible kinds of completion. This enum doesn't
+        necessarily reflect what is possible with haxe compiler/server queries.
+        Plugin could decide to use or not use the haxe compiler depending
+        on the completion kind at the current position. */
+enum SuggestionsKind {
+    DOT_PACKAGE;
+    DOT_PROPERTY;
+    STRUCTURE_KEYS;
+    STRUCTURE_KEY_VALUE;
+    ASSIGN_VALUE;
+    CALL_ARGUMENTS;
+    TOP_LEVEL;
+}
+
+enum SuggestionsStatus {
+    NONE;
+    FETCHING;
+    FETCHED;
+    CANCELED;
+    BROKEN;
+}
+
+    /** Suggestion object. Mainly inspired from atom's autocomplete-plus
+        suggestion format, but should ideally provide all the
+        required data for any code completion/IDE API. */
+typedef Suggestion = {
+
+        /** A snippet string. This will allow users to tab through
+            function arguments or other options. */
+    @:optional var snippet:String;
+
+        /** The text which will be inserted into the editor,
+            in place of the prefix */
+    @:optional var text:String;
+
+        /** A string that will show in the UI for this suggestion. */
+    @:optional var display_text:String;
+
+        /** The kind of suggestion. May change the display in UI like
+            adding an icon etc... */
+    @:optional var kind:String;
+
+        /** Type: text usually displayed after the suggestion. */
+    @:optional var type:String;
+
+        /** Additional description/documentation to be displayed. */
+    @:optional var description:String;
+
+        /** Url to read further documentation. */
+    @:optional var url:String;
+
+        /** Related haxe query result item, if any. */
+    @:optional var query_result_item:QueryResultListItem;
+
+} //Suggestion

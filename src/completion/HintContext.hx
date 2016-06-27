@@ -1,6 +1,8 @@
 package completion;
 
-class TypeHintContext {
+    /** Current (type) hint context from file contents and position.
+        TODO Move to tides eventually? */
+class HintContext {
 
     public var hint(default,null):String;
 

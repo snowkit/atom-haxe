@@ -5,7 +5,7 @@ import utils.Promise;
 import utils.HTML;
 
 import completion.Query;
-import completion.CompletionContext;
+import completion.SuggestionsContext;
 
 import atom.TextEditor;
 import atom.Range;
@@ -61,10 +61,11 @@ typedef AutocompletePlusSuggestion = {
 
 } //Suggestion
 
-    /** Provide code completion to atom's autocomplete-plus plugin */
-class AutocompletePlusProvider {
+    /** Provide code completion suggestions.
+        Depends on atom. */
+class SuggestionsProvider {
 
-    var context:CompletionContext = null;
+    var context:SuggestionsContext = null;
 
     public function new() {
 
@@ -82,13 +83,13 @@ class AutocompletePlusProvider {
             var index = text_before_cursor.length;
 
             var previous_context = context;
-            context = new CompletionContext({
+            context = new SuggestionsContext({
                 file_path: options.editor.getBuffer().file.path,
                 file_content: text,
                 cursor_index: index
             });
 
-            context.fetch(previous_context).then(function(context:CompletionContext) {
+            context.fetch(previous_context).then(function(context:SuggestionsContext) {
 
                 if (options.activatedManually ||
                     context.position_info.dot_start != null ||
@@ -116,7 +117,7 @@ class AutocompletePlusProvider {
     } //get_suggestions
 
         /** Get autocomplete-plus suggestions from completion context's suggestions */
-    function convert_suggestions(context:CompletionContext):Array<AutocompletePlusSuggestion> {
+    function convert_suggestions(context:SuggestionsContext):Array<AutocompletePlusSuggestion> {
 
         var suggestions:Array<AutocompletePlusSuggestion> = [];
 
