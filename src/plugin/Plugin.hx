@@ -15,6 +15,7 @@ import server.HaxeServer;
 
 import completion.Query;
 import completion.SuggestionsProvider;
+import completion.HintProvider;
 
 import js.Node.require;
 import js.node.Path;
@@ -71,6 +72,8 @@ class Plugin {
     @:allow(AtomHaxe)
     private static var autocomplete_provider(get,null):Dynamic;
 
+    private static var hint_provider(default,null):HintProvider;
+
     public static var state(default,null):State = null;
 
     public static var haxe_server(default,null):HaxeServer = null;
@@ -91,6 +94,7 @@ class Plugin {
             init_server();
             init_commands();
             init_menus();
+            init_hints();
 
         }).catchError(function(e:Dynamic) {
 
@@ -247,6 +251,33 @@ class Plugin {
         Build.run_build();
 
     } //build
+
+/// Hints
+
+    private static function init_hints():Void {
+
+        subscriptions.add(atom.workspace.observeTextEditors(function(editor) {
+
+            if (editor.getGrammar() == null || editor.getGrammar().scopeName != 'source.haxe' && editor.getGrammar().scopeName != 'source.hx') {
+                return;
+            }
+
+            var hint_provider = new HintProvider(editor);
+
+            var disposable = editor.onDidChangeCursorPosition(function(event) {
+                hint_provider.update();
+            });
+
+            editor.onDidDestroy(function() {
+                disposable.dispose();
+                disposable = null;
+                hint_provider.destroy();
+                hint_provider = null;
+            });
+
+        }));
+
+    } //init_hints
 
 /// Linter
 

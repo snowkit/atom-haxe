@@ -42,6 +42,38 @@ atom-overlay {
     }
 }
 
+// Hint
+atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
+
+    atom-overlay.haxe-hint-container {
+        @haxe-hint-spacing: 3px;
+        @haxe-hint-inline-link: fade(@base-background-color, 66%);
+        @haxe-hint-inline-fg: @base-background-color;
+        @haxe-hint-inline-bg: fade(@text-color, 80%);
+        margin-top: -3.67em;
+        max-width: 60%;
+        background: @haxe-hint-inline-bg;
+        color: @haxe-hint-inline-fg;
+        border-radius: @component-border-radius * 1.5;
+        border-bottom-left-radius: 0;
+        padding: @haxe-hint-spacing @haxe-hint-spacing * 1.5;
+        box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
+        font-size: 0.9em;
+        z-index: 999;
+
+        transition: opacity 300ms;
+        &.transparent {
+            opacity: 0.2;
+        }
+    }
+
+    atom-overlay.autocomplete-plus::after {
+        content: "";
+        display: block;
+        height: 100px;
+    }
+}
+
 // Fixing up truncated right label
 atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
     atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list .right-label {
