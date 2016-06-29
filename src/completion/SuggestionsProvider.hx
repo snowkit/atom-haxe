@@ -106,7 +106,7 @@ class SuggestionsProvider {
 
             }).catchError(function(error) {
 
-                Log.error(error);
+                Log.warn(error);
 
                 resolve([]);
 

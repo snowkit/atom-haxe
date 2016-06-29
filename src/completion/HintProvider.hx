@@ -74,7 +74,7 @@ class HintProvider {
 
             }).catchError(function(error) {
 
-                Log.error(error);
+                Log.warn(error);
 
             }); //fetch
         }
@@ -115,12 +115,10 @@ class HintProvider {
     function set_html(html:String):String {
 
         if (html != null && html.length > 0) {
-            trace('block');
             view.innerHTML = html;
             view.style.display = 'block';
         }
         else {
-            trace('none');
             view.innerHTML = '';
             view.style.display = 'none';
         }

@@ -46,7 +46,7 @@ atom-overlay {
 atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
 
     atom-overlay.haxe-hint-container .haxe-hint {
-        @haxe-hint-spacing: 3px;
+        @haxe-hint-spacing: 4px;
         @haxe-hint-inline-link: fade(@base-background-color, 66%);
         //@haxe-hint-inline-fg: @base-background-color;
         //@haxe-hint-inline-bg: fade(@text-color, 90%);
@@ -61,7 +61,7 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
         box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
         font-size: 0.7em;
         z-index: 999;
-        padding: 0 3px;
+        padding: 0 @haxe-hint-spacing;
 
         transition: opacity 300ms;
         &.transparent {
@@ -70,8 +70,8 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
 
         > .haxe-hint-selected {
             display: inline-block;
-            padding: 3px 3px;
-            margin: 0 -3px;
+            padding: @haxe-hint-spacing @haxe-hint-spacing;
+            margin: 0 -@haxe-hint-spacing;
             color: @haxe-hint-inline-fg;
             background-color: fade(@haxe-hint-inline-fg, 10%);
 
@@ -82,8 +82,8 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
 
         > :not(.haxe-hint-selected) {
             display: inline-block;
-            padding: 3px 3px;
-            margin: 0 -3px;
+            padding: @haxe-hint-spacing @haxe-hint-spacing;
+            margin: 0 -@haxe-hint-spacing;
         }
 
         .haxe-hint-name {

@@ -6,6 +6,7 @@ import completion.Query;
 
 import utils.Promise;
 import utils.HTML;
+import utils.Log;
 
 import js.node.Buffer;
 
@@ -37,7 +38,13 @@ class HintContext {
 
     public var type_query_result(default,null):QueryResult;
 
+/// State
+
     public var status:HintStatus = NONE;
+
+    var fetch_promise:Promise<HintContext> = null;
+
+    var fetch_reject:String->Void = null;
 
     public function new(options:HintContextOptions) {
 
@@ -80,28 +87,86 @@ class HintContext {
 
     } //compute_info
 
-    public function fetch(previous_context:HintContext):Promise<HintContext> {
+/// Query fetching
 
-        return new Promise<HintContext>(function(resolve, reject) {
+    public function fetch(?previous_context:HintContext):Promise<HintContext> {
 
-            compute_hint().then(function(result) {
-                    // Set hint
-                hint = result;
-                    // Resolve with hint
-                if (status != CANCELED) {
-                    status = FETCHED;
-                    resolve(this);
+            // Create fetch promise
+        if (fetch_promise == null) {
+
+            status = FETCHING;
+
+                // Check that we don't just need the same information as previous context
+            if (can_use_previous_context(previous_context)) {
+                    // If so, fetch info from it
+                fetch_promise = fetch_from_previous_context(previous_context);
+            }
+            else {
+                    // Cancel previous context fetching if needed
+                if (previous_context != null && previous_context.status == FETCHING) {
+                    previous_context.cancel_fetch();
                 }
-            })
-            .catchError(function(error) {
-                    // Still resolve, even without hint
-                if (status != CANCELED) {
-                    status = FETCHED;
-                    resolve(this);
-                }
-            });
 
-        });
+                    // Otherwise perform "fresh" fetch
+                fetch_promise = new Promise<HintContext>(function(resolve, reject) {
+
+                    if (status == CANCELED) {
+                        reject("Fetch was canceled");
+                        return;
+                    }
+
+                    fetch_reject = reject;
+
+                    haxe.Timer.delay(function() {
+
+                        if (hint_kind == CALL_ARGUMENTS && position_info.paren_start != null) {
+                            var options:QueryOptions = {
+                                file: file_path,
+                                stdin: file_content,
+                                byte: position_info.paren_start + 1
+                            };
+
+                            Query.run(options).then(function(result:QueryResult) {
+
+                                    // At fetch result/error
+                                if (status != CANCELED) {
+
+                                    if (result.kind == TYPE) {
+
+                                        type_query_result = result;
+
+                                        compute_hint();
+                                    }
+
+                                    status = FETCHED;
+                                    resolve(this);
+                                }
+                            })
+                            .catchError(function(error) {
+
+                                Log.warn('No hint found');
+
+                                // TODO log server error, when
+                                // hint debug is enabled
+                                //Log.error(error);
+
+                                    // At fetch result/error
+                                if (status != CANCELED) {
+                                    status = BROKEN;
+                                    reject('No hint found');
+                                }
+
+                            });
+                        }
+
+                    }, 0); // Explicit delay to ensure the order of context completion/cancelation
+
+                }); //Promise
+            }
+        }
+
+        return fetch_promise;
+
     } //fetch
 
     public function can_use_previous_context(previous_context:HintContext):Bool {
@@ -114,83 +179,113 @@ class HintContext {
 
     } //can_use_previous_context
 
-    function compute_hint():Promise<String> {
+    function fetch_from_previous_context(previous_context:HintContext):Promise<HintContext> {
 
-        return new Promise<String>(function(resolve, reject) {
+        return new Promise<HintContext>(function(resolve, reject) {
 
-            if (hint_kind == CALL_ARGUMENTS && position_info.paren_start != null) {
-                var options:QueryOptions = {
-                    file: file_path,
-                    stdin: file_content,
-                    byte: position_info.paren_start + 1
-                };
+            if (status == CANCELED) {
+                reject("Fetch was canceled");
+                return;
+            }
 
-                Query.run(options).then(function(result:QueryResult) {
-                    if (result.kind == TYPE) {
-                        type_query_result = result;
+            fetch_reject = reject;
 
-                        if (result.parsed_type.args != null) {
+            previous_context.fetch().then(function(previous_context) {
 
-                            if (result.parsed_type.args.length > 0) {
+                    // At fetch result
+                if (status != CANCELED) {
 
-                                var flat_args = [];
+                    status = FETCHED;
 
-                                for (arg in result.parsed_type.args) {
-                                    var name = arg.name;
-                                    if (name == null) name = 'arg' + flat_args.length + 1;
-                                    var type = null;
-                                    if (arg.composed_type != null) {
-                                        type = Haxe.string_from_parsed_type(arg.composed_type, {compact: true});
-                                    } else if (arg.type != null) {
-                                        type = arg.type;
-                                    }
-                                    var flat_arg = name;
+                    type_query_result = previous_context.type_query_result;
 
-                                    flat_arg = '<span class="haxe-hint-name">' + HTML.escape(flat_arg) + '</span>';
+                    compute_hint();
 
-                                    if (arg.optional) {
-                                        flat_arg = '?' + flat_arg;
-                                    }
+                    resolve(this);
+                }
 
-                                    if (type != null && type.length > 0) {
-                                        flat_arg += ':<span class="haxe-hint-type">' + HTML.escape(type) + '</span>';
-                                    }
+            }).catchError(function(error) {
 
-                                    flat_args.push(flat_arg);
-                                }
+                if (status != CANCELED) {
+                    status = BROKEN;
 
-                                if (position_info.number_of_args != null) {
-                                    for (i in 0...flat_args.length) {
-                                        if (position_info.number_of_args == i + 1) {
-                                            flat_args[i] = '<span class="haxe-hint-selected">' + flat_args[i] + '</span>';
-                                        }
-                                    }
-                                }
+                    reject(error);
+                }
 
-                                resolve(flat_args.join(', '));
-                            }
-                            else {
-                                resolve('<span class="haxe-hint-no-args">(no arguments)</span>');
-                            }
+            }); //fetch
 
-                        } else {
-                            resolve(null);
+        }); //Promise
+
+    } //fetch_from_previous_context
+
+    function cancel_fetch():Void {
+
+        if (status == FETCHING) {
+            status = CANCELED;
+
+            if (fetch_reject != null) {
+                var reject = fetch_reject;
+                fetch_reject = null;
+                reject("Fetch was canceled");
+            }
+        }
+        else {
+            status = CANCELED;
+        }
+
+    } //cancel_fetch
+
+/// Hint
+
+    function compute_hint():Void {
+
+        if (type_query_result.parsed_type.args != null) {
+
+            if (type_query_result.parsed_type.args.length > 0) {
+
+                var flat_args = [];
+
+                for (arg in type_query_result.parsed_type.args) {
+                    var name = arg.name;
+                    if (name == null) name = 'arg' + flat_args.length + 1;
+                    var type = null;
+                    if (arg.composed_type != null) {
+                        type = Haxe.string_from_parsed_type(arg.composed_type, {compact: true});
+                    } else if (arg.type != null) {
+                        type = arg.type;
+                    }
+                    var flat_arg = name;
+
+                    flat_arg = '<span class="haxe-hint-name">' + HTML.escape(flat_arg) + '</span>';
+
+                    if (arg.optional) {
+                        flat_arg = '?' + flat_arg;
+                    }
+
+                    if (type != null && type.length > 0) {
+                        flat_arg += ':<span class="haxe-hint-type">' + HTML.escape(type) + '</span>';
+                    }
+
+                    flat_args.push(flat_arg);
+                }
+
+                if (position_info.number_of_args != null) {
+                    for (i in 0...flat_args.length) {
+                        if (position_info.number_of_args == i + 1) {
+                            flat_args[i] = '<span class="haxe-hint-selected">' + flat_args[i] + '</span>';
                         }
                     }
-                    else {
-                        resolve(null);
-                    }
+                }
 
-                }).catchError(function(error) {
-                    reject(error);
-                });
+                hint = flat_args.join(', ');
             }
             else {
-
-                resolve(null);
+                hint = '<span class="haxe-hint-no-args">(no arguments)</span>';
             }
 
-        }); // Promise
+        } else {
+            hint = null;
+        }
 
     } //compute_hint
 
