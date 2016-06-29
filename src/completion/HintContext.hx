@@ -8,8 +8,6 @@ import utils.Promise;
 import utils.HTML;
 import utils.Log;
 
-import js.node.Buffer;
-
 using StringTools;
 
     /** Current (type) hint context from file contents and position.
@@ -86,7 +84,7 @@ class HintContext {
         }
 
             // TODO remove/move node.js dependency
-        completion_byte = Buffer.byteLength(file_content.substr(0, completion_index), 'utf8');
+        completion_byte = utils.Bytes.string_length(file_content.substr(0, completion_index));
 
     } //compute_info
 

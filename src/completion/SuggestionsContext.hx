@@ -3,13 +3,12 @@ package completion;
 import tides.parse.Haxe;
 
 import completion.Query;
+import completion.QueryExtras;
 import completion.QueryResult;
 
 import utils.Promise;
 import utils.Fuzzaldrin;
 import utils.Log;
-
-import js.node.Buffer;
 
     /** Current suggestions context from file contents and position.
         TODO Move to tides eventually? */
@@ -122,8 +121,7 @@ class SuggestionsContext {
             prefix = text.substring(position_info.identifier_start, cursor_index);
         }
 
-            // TODO remove/move node.js dependency
-        completion_byte = Buffer.byteLength(file_content.substr(0, completion_index), 'utf8');
+        completion_byte = utils.Bytes.string_length(file_content.substr(0, completion_index));
 
     } //compute_info
 

@@ -10,6 +10,7 @@ import atom.CompositeDisposable;
 import utils.MessagePanel;
 import utils.Log;
 import utils.Promise;
+import utils.TemporaryFile;
 
 import server.HaxeServer;
 
