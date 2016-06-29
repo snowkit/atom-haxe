@@ -68,7 +68,10 @@ class HintContext {
 
         switch (position_info.kind) {
             case FUNCTION_CALL:
-                if (position_info.brace_start != null) {
+                if (position_info.brace_start != null &&
+                    (position_info.partial_key != null ||
+                    (position_info.key_path != null && position_info.key_path.length > 0) ||
+                    (position_info.used_keys != null && position_info.used_keys.length > 0))) {
                     completion_index = position_info.brace_start + 1;
                     if (position_info.partial_key == null) {
                         hint_kind = STRUCTURE_KEY_VALUE;
