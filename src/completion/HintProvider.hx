@@ -6,6 +6,10 @@ import js.Browser.document;
 import atom.Atom.atom;
 import atom.TextEditor;
 import atom.Decoration;
+import atom.Range;
+import atom.Point;
+
+import utils.Log;
 
     /** Provide (type) hints next to the cursor position, if relevant.
         Depends on atom. */
@@ -21,31 +25,68 @@ class HintProvider {
 
     var editor:TextEditor;
 
+    var did_bind_view:Bool = false;
+
     public var html(get, set):String;
 
     public function new(editor:TextEditor) {
 
         this.editor = editor;
         view = document.createDivElement();
+        view.className = 'haxe-hint';
 
     } //new
 
     public function update():Void {
 
-        if (view == null) {
+        if (!did_bind_view) {
 
             bind_view();
         }
 
-        if (marker == null) {
-            //
+        if (editor.getLastCursor != null) {
+
+            var cursor = editor.getLastCursor();
+            if (cursor == null) return;
+
+            var buffer_pos = cursor.getBufferPosition();
+            var text_before_cursor = editor.getTextInBufferRange(new Range(new Point(0,0), buffer_pos));
+            var text = editor.getText();
+            var index = text_before_cursor.length;
+
+            var previous_context = context;
+            context = new HintContext({
+                file_path: editor.getBuffer().file.path,
+                file_content: text,
+                cursor_index: index
+            });
+
+            if (!context.can_use_previous_context(previous_context)) {
+                    // If we know the contextes are too different,
+                    // Clear hint right away.
+                html = null;
+            }
+
+            context.fetch(previous_context).then(function(context:HintContext) {
+
+                Log.success('Hint: ' + context.hint);
+                html = context.hint;
+
+            }).catchError(function(error) {
+
+                Log.error(error);
+
+            }); //fetch
         }
 
     } //set_position
 
     function bind_view():Void {
+        did_bind_view = true;
+
             // View
         html = null;
+        atom.views.getView(atom.workspace).appendChild(view);
 
             // Marker
         if (editor.getLastCursor != null && editor.getLastCursor() != null) {
@@ -63,8 +104,6 @@ class HintProvider {
             position: 'after',
             invalidate: 'touch'
         });
-
-        atom.views.getView(atom.workspace).appendChild(view);
     }
 
     function get_html():String {
@@ -76,14 +115,16 @@ class HintProvider {
     function set_html(html:String):String {
 
         if (html != null && html.length > 0) {
+            trace('block');
             view.innerHTML = html;
             view.style.display = 'block';
         }
         else {
+            trace('none');
             view.innerHTML = '';
             view.style.display = 'none';
         }
-        
+
         return html;
 
     } //set_html

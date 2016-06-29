@@ -66,8 +66,6 @@ class SuggestionsContext {
             // Compute position info
         position_info = Haxe.parse_cursor_info(text, cursor_index);
 
-        Log.debug(position_info);
-
         switch (position_info.kind) {
 
             case DOT_ACCESS:
@@ -218,7 +216,7 @@ class SuggestionsContext {
 
     } //fetch
 
-    function can_use_previous_context(previous_context:SuggestionsContext):Bool {
+    public function can_use_previous_context(previous_context:SuggestionsContext):Bool {
 
         return previous_context != null
             && previous_context.completion_index == completion_index
@@ -458,6 +456,7 @@ typedef SuggestionsContextOptions = {
         Plugin could decide to use or not use the haxe compiler depending
         on the completion kind at the current position. */
 enum SuggestionsKind {
+    NONE;
     DOT_PACKAGE;
     DOT_PROPERTY;
     STRUCTURE_KEYS;

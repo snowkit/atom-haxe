@@ -45,25 +45,41 @@ atom-overlay {
 // Hint
 atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
 
-    atom-overlay.haxe-hint-container {
+    atom-overlay.haxe-hint-container .haxe-hint {
         @haxe-hint-spacing: 3px;
         @haxe-hint-inline-link: fade(@base-background-color, 66%);
         @haxe-hint-inline-fg: @base-background-color;
-        @haxe-hint-inline-bg: fade(@text-color, 80%);
-        margin-top: -3.67em;
-        max-width: 60%;
+        @haxe-hint-inline-bg: fade(@text-color, 90%);
+        margin-top: -4.3em;
+        white-space: nowrap;
         background: @haxe-hint-inline-bg;
-        color: @haxe-hint-inline-fg;
+        color: fade(@haxe-hint-inline-fg, 60%);
         border-radius: @component-border-radius * 1.5;
         border-bottom-left-radius: 0;
         padding: @haxe-hint-spacing @haxe-hint-spacing * 1.5;
         box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
-        font-size: 0.9em;
+        font-size: 0.7em;
         z-index: 999;
 
         transition: opacity 300ms;
         &.transparent {
             opacity: 0.2;
+        }
+
+        .haxe-hint-name {
+            font-weight: bold;
+        }
+
+        .haxe-hint-selected {
+            color: @haxe-hint-inline-fg;
+
+            .haxe-hint-type {
+                color: @haxe-hint-inline-fg;
+            }
+        }
+
+        .haxe-hint-type {
+            color: fade(@haxe-hint-inline-fg, 60%);
         }
     }
 
