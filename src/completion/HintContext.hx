@@ -131,41 +131,47 @@ class HintContext {
 
                         if (result.parsed_type.args != null) {
 
-                            var flat_args = [];
+                            if (result.parsed_type.args.length > 0) {
 
-                            for (arg in result.parsed_type.args) {
-                                var name = arg.name;
-                                if (name == null) name = 'arg' + flat_args.length + 1;
-                                var type = null;
-                                if (arg.composed_type != null) {
-                                    type = Haxe.string_from_parsed_type(arg.composed_type, {compact: true});
-                                } else if (arg.type != null) {
-                                    type = arg.type;
+                                var flat_args = [];
+
+                                for (arg in result.parsed_type.args) {
+                                    var name = arg.name;
+                                    if (name == null) name = 'arg' + flat_args.length + 1;
+                                    var type = null;
+                                    if (arg.composed_type != null) {
+                                        type = Haxe.string_from_parsed_type(arg.composed_type, {compact: true});
+                                    } else if (arg.type != null) {
+                                        type = arg.type;
+                                    }
+                                    var flat_arg = name;
+
+                                    flat_arg = '<span class="haxe-hint-name">' + HTML.escape(flat_arg) + '</span>';
+
+                                    if (arg.optional) {
+                                        flat_arg = '?' + flat_arg;
+                                    }
+
+                                    if (type != null && type.length > 0) {
+                                        flat_arg += ':<span class="haxe-hint-type">' + HTML.escape(type) + '</span>';
+                                    }
+
+                                    flat_args.push(flat_arg);
                                 }
-                                var flat_arg = name;
 
-                                flat_arg = '<span class="haxe-hint-name">' + HTML.escape(flat_arg) + '</span>';
-
-                                if (arg.optional) {
-                                    flat_arg = '?' + flat_arg;
-                                }
-
-                                if (type != null && type.length > 0) {
-                                    flat_arg += ':<span class="haxe-hint-type">' + HTML.escape(type) + '</span>';
-                                }
-
-                                flat_args.push(flat_arg);
-                            }
-
-                            if (position_info.number_of_args != null) {
-                                for (i in 0...flat_args.length) {
-                                    if (position_info.number_of_args == i + 1) {
-                                        flat_args[i] = '<span class="haxe-hint-selected">' + flat_args[i] + '</span>';
+                                if (position_info.number_of_args != null) {
+                                    for (i in 0...flat_args.length) {
+                                        if (position_info.number_of_args == i + 1) {
+                                            flat_args[i] = '<span class="haxe-hint-selected">' + flat_args[i] + '</span>';
+                                        }
                                     }
                                 }
-                            }
 
-                            resolve(flat_args.join(', '));
+                                resolve(flat_args.join(', '));
+                            }
+                            else {
+                                resolve('<span class="haxe-hint-no-args">(no arguments)</span>');
+                            }
 
                         } else {
                             resolve(null);
