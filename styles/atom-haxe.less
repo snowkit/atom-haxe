@@ -48,16 +48,12 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
     atom-overlay.haxe-hint-container .haxe-hint {
         @haxe-hint-spacing: 4px;
         @haxe-hint-inline-link: fade(@base-background-color, 66%);
-        //@haxe-hint-inline-fg: @base-background-color;
-        //@haxe-hint-inline-bg: fade(@text-color, 90%);
         @haxe-hint-inline-fg: @syntax-text-color;
         @haxe-hint-inline-bg: @base-background-color;
         margin-top: -4.3em;
         white-space: nowrap;
         background: @haxe-hint-inline-bg;
         color: fade(@haxe-hint-inline-fg, 60%);
-        //border-radius: @component-border-radius * 1.5;
-        //border-bottom-left-radius: 0;
         box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
         font-size: 0.7em;
         z-index: 999;
@@ -109,9 +105,9 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
 // Fixing up truncated right label
 atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
     atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list .right-label {
-        max-width: none;
+        //
     }
     atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list .left-label {
-        max-width: none;
+        //
     }
 }
