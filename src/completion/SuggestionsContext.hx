@@ -52,6 +52,7 @@ class SuggestionsContext {
         file_content = options.file_content;
         cursor_index = options.cursor_index;
 
+//Query.run({})
         compute_info();
 
     } //new
@@ -73,7 +74,7 @@ class SuggestionsContext {
 
             case FUNCTION_CALL:
                 if (position_info.brace_start != null) {
-                    completion_index = position_info.brace_start + 1;
+                    completion_index = position_info.paren_start + 1;
                     if (position_info.partial_key != null) {
                         suggestions_kind = STRUCTURE_KEYS;
                     } else {
@@ -91,7 +92,7 @@ class SuggestionsContext {
 
             case VARIABLE_ASSIGN:
                 if (position_info.brace_start != null) {
-                    completion_index = position_info.brace_start + 1;
+                    completion_index = position_info.paren_start + 1;
                     if (position_info.partial_key != null) {
                         suggestions_kind = STRUCTURE_KEYS;
                     } else {
@@ -122,6 +123,8 @@ class SuggestionsContext {
         }
 
         completion_byte = utils.Bytes.string_length(file_content.substr(0, completion_index));
+
+        trace('prefix: ' + prefix);
 
     } //compute_info
 
@@ -172,7 +175,21 @@ class SuggestionsContext {
                             default:
                         }
 
-                        Query.run(options)
+                        var query:Promise<QueryResult>;
+                        if (suggestions_kind == STRUCTURE_KEYS && position_info.key_path != null) {
+
+                            query = QueryExtras.run_type_then_fields_for_key_path({
+                                file: options.file,
+                                stdin: options.stdin,
+                                byte: options.byte,
+                                key_path: position_info.key_path,
+                                arg_index: position_info.number_of_args - 1
+                            });
+                        } else {
+                            query = Query.run(options);
+                        }
+
+                        query
                         .then(function(result) {
 
                                 // At fetch result/error

@@ -274,11 +274,13 @@ class HintContext {
                     for (i in 0...flat_args.length) {
                         if (position_info.number_of_args == i + 1) {
                             flat_args[i] = '<span class="haxe-hint-selected">' + flat_args[i] + '</span>';
+                        } else {
+                            flat_args[i] = '<span class="haxe-hint-not-selected">' + flat_args[i] + '</span>';
                         }
                     }
                 }
 
-                hint = flat_args.join(', ');
+                hint = flat_args.join(',');
             }
             else {
                 hint = '<span class="haxe-hint-no-args">(no arguments)</span>';

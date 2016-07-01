@@ -93,7 +93,8 @@ class SuggestionsProvider {
 
                 if (options.activatedManually ||
                     context.position_info.dot_start != null ||
-                    context.position_info.identifier_start != null) {
+                    context.position_info.identifier_start != null ||
+                    context.position_info.brace_start != null) {
 
                     Log.success('Suggestions: ' + context.filtered_suggestions.length);
                     resolve(convert_suggestions(context));

@@ -54,13 +54,15 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
         @haxe-hint-inline-link: fade(@base-background-color, 66%);
         @haxe-hint-inline-fg: @syntax-text-color;
         @haxe-hint-inline-bg: @base-background-color;
-        margin-top: -4.3em;
+        position: relative;
+        left: 0;
+        top: -4.3em;
         white-space: nowrap;
         background: @haxe-hint-inline-bg;
         color: fade(@haxe-hint-inline-fg, 60%);
         box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
         font-size: 0.7em;
-        padding: 0 @haxe-hint-spacing;
+        //padding: 0 @haxe-hint-spacing;
 
         transition: opacity 300ms;
         &.transparent {
@@ -70,7 +72,7 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
         > .haxe-hint-selected {
             display: inline-block;
             padding: @haxe-hint-spacing @haxe-hint-spacing;
-            margin: 0 -@haxe-hint-spacing;
+            //margin: 0 -@haxe-hint-spacing;
             color: @haxe-hint-inline-fg;
             background-color: fade(@haxe-hint-inline-fg, 10%);
 
@@ -79,10 +81,11 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
             }
         }
 
-        > :not(.haxe-hint-selected) {
+        > .haxe-hint-not-selected {
             display: inline-block;
             padding: @haxe-hint-spacing @haxe-hint-spacing;
-            margin: 0 -@haxe-hint-spacing;
+            //padding: @haxe-hint-spacing @haxe-hint-spacing;
+            //margin: 0 -@haxe-hint-spacing;
         }
 
         .haxe-hint-name {

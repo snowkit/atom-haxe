@@ -8,6 +8,14 @@ import plugin.Plugin.state;
 
 import completion.QueryResult;
 
+typedef QueryOptionsMore = {
+
+    var test: String;
+
+    var youpi: Int;
+
+}
+
 typedef QueryOptions = {
 
     @:optional var byte:Int;
@@ -21,6 +29,8 @@ typedef QueryOptions = {
     @:optional var kind:String;
 
     @:optional var args:Array<String>;
+
+    @:optional var more:QueryOptionsMore;
 
 }
 
