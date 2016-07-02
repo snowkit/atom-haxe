@@ -52,7 +52,6 @@ class SuggestionsContext {
         file_content = options.file_content;
         cursor_index = options.cursor_index;
 
-//Query.run({})
         compute_info();
 
     } //new
@@ -123,8 +122,6 @@ class SuggestionsContext {
         }
 
         completion_byte = utils.Bytes.string_length(file_content.substr(0, completion_index));
-
-        trace('prefix: ' + prefix);
 
     } //compute_info
 
@@ -336,10 +333,10 @@ class SuggestionsContext {
                         if (item.type != null) {
                             if (item.type.args != null) {
                                 is_function = true;
-                                suggestion.type = Haxe.string_from_parsed_type(item.type.composed_type);
+                                suggestion.type = Haxe.string_from_parsed_type(item.type.composed_type, {unwrap_nulls: true});
                             }
                             else {
-                                suggestion.type = Haxe.string_from_parsed_type(item.type);
+                                suggestion.type = Haxe.string_from_parsed_type(item.type, {unwrap_nulls: true});
                             }
                         }
 
