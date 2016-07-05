@@ -5,6 +5,8 @@ import js.Node.process;
 
 import utils.Promise;
 
+using StringTools;
+
 typedef ExecResult = {
     var out: String;
     var err: String;
@@ -13,6 +15,11 @@ typedef ExecResult = {
 
 typedef ExecOptions = {
     @:optional var cwd: String;
+}
+
+typedef ParsedCommandLine = {
+    var cmd: String;
+    var args: Array<String>;
 }
 
     /** Utility to run a command with arguments. */
@@ -65,5 +72,82 @@ class Exec {
         });
 
     } //run
+
+    public static function parse_command_line(command_line:String):ParsedCommandLine {
+
+        // Ported from: https://github.com/binocarlos/spawn-args
+
+    	var arr:Array<String> = [];
+
+    	var current:String = null;
+    	var quoted:String = null;
+    	var quoteType = null;
+
+    	function add_current() {
+    		if (current != null) {
+    			// trim extra whitespace on the current arg
+    			arr.push(current.trim());
+    			current = null;
+    		}
+    	}
+
+    	// remove escaped newlines
+    	command_line = command_line.replace('\\\n', '');
+
+    	for (i in 0...command_line.length) {
+    		var c = command_line.charAt(i);
+
+    		if (c == " ") {
+    			if (quoted != null) {
+    				quoted += c;
+    			}
+    			else {
+    				add_current();
+    			}
+    		}
+    		else if (c == '\'' || c == '"') {
+    			if (quoted != null) {
+    				quoted += c;
+    				// only end this arg if the end quote is the same type as start quote
+    				if (quoteType == c) {
+    					// make sure the quote is not escaped
+    					if (quoted.charAt(quoted.length - 2) != '\\') {
+    						arr.push(quoted);
+    						quoted = null;
+    						quoteType = null;
+    					}
+    				}
+    			}
+    			else {
+    				add_current();
+    				quoted = c;
+    				quoteType = c;
+    			}
+    		}
+    		else{
+    			if (quoted != null) {
+    				quoted += c;
+    			}
+    			else{
+    				if (current != null) {
+    					current += c;
+    				}
+    				else {
+    					current = c;
+    				}
+    			}
+    		}
+    	}
+
+    	add_current();
+
+        var cmd = arr.shift();
+
+    	return {
+            cmd: cmd,
+            args: arr
+        };
+
+    } //parse_command_line
 
 }

@@ -4,6 +4,7 @@ import js.node.Path;
 
 import plugin.Plugin;
 import build.DefaultBuilder;
+import lint.DefaultLinter;
 import utils.Log;
 
 import atom.Atom.atom;
@@ -17,6 +18,8 @@ class State {
     public var hxml(get,null):HXMLInfo;
 
     public var builder(get,null):Builder;
+
+    public var linter(get,null):Linter;
 
 /// Lifecycle
 
@@ -82,6 +85,16 @@ class State {
             return consumer.builder;
         } else {
             return DefaultBuilder;
+        }
+
+    } //get_builder
+
+    private function get_linter():Linter {
+
+        if (consumer.linter != null) {
+            return consumer.linter;
+        } else {
+            return DefaultLinter;
         }
 
     } //get_builder

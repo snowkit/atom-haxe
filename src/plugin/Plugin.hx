@@ -6,6 +6,7 @@ import service.HaxeService;
 
 import atom.Atom.atom;
 import atom.CompositeDisposable;
+import atom.TextEditor;
 
 import utils.MessagePanel;
 import utils.Log;
@@ -24,32 +25,60 @@ import js.node.Fs;
 
 import lint.Lint;
 
+import plugin.consumer.HaxeProjectConsumer;
+
 using StringTools;
 
     /** Consumer interface to feed the haxe service */
 typedef Consumer = {
+
         /** The name of the consumer */
     var name:String;
+
         /** The contextual hxml info */
     var hxml:HXMLInfo;
+
         /** The builder, if this consumer does build */
     @:optional var builder:Builder;
+
+        /** Custom build command, instead of the default one */
+    @:optional var build_command:String;
+
+        /** The linter, if this consumer does lint */
+    @:optional var linter:Linter;
+
+        /** Custom lint command, instead of the default one.
+            When using default linter, can be any command that
+            outputs haxe compiler alike output. */
+    @:optional var lint_command:String;
+
         /** If provided, will be called when this consumer is not used anymore. */
     @:optional function dispose():Void;
 }
 
     /** Custom haxe builder (provided by a consumer) */
 typedef Builder = {
+    
         /** Run build */
     function build():Void;
 }
 
+    /** Custom haxe linter (provided by a consumer) */
+typedef Linter = {
+
+        /** Run lint */
+    function lint(editor:TextEditor):Promise<Dynamic>;
+}
+
     /** HXML Info. */
 typedef HXMLInfo = {
+
         /** Populate this with the hxml content for your project */
     var content:String;
+
         /** The current working directory for the hxml content */
     var cwd:String;
+
         /** If provided, and if using the default build,
             will be used as argument to build the haxe project.
             The default hxml consumer is providing it. */
