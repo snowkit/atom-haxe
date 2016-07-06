@@ -4,6 +4,7 @@ import js.node.ChildProcess as NodeProcess;
 import js.Node.process;
 
 import utils.Promise;
+import utils.Log;
 
 using StringTools;
 
@@ -14,7 +15,12 @@ typedef ExecResult = {
 }
 
 typedef ExecOptions = {
+
     @:optional var cwd: String;
+
+        /** When given, will kill any previous
+            process using the same channel. */
+    @:optional var channel: String;
 }
 
 typedef ParsedCommandLine = {
@@ -24,6 +30,8 @@ typedef ParsedCommandLine = {
 
     /** Utility to run a command with arguments. */
 class Exec {
+
+    static var kill_by_channel:Map<String,Dynamic> = new Map<String,Dynamic>();
 
     private static function __init__() {
             // OS X El Capitan fix (for now)
@@ -43,12 +51,35 @@ class Exec {
             var total_err = "";
             var total_out = "";
             var spawn_options:Dynamic = {cwd: process.cwd()};
+            var closed = false;
+            var killed = false;
+            var channel = null;
             if (options != null) {
                 if (options.cwd != null) spawn_options.cwd = options.cwd;
+                channel = options.channel;
             }
 
                 // Spawn process
             var proc = NodeProcess.spawn(cmd, args, spawn_options);
+
+                // Kill previous process on this channel, if any
+            if (channel != null) {
+                var kill = kill_by_channel.get(channel);
+                if (kill != null) {
+                    kill();
+                }
+            }
+
+                // Keep kill function for this channel, if any
+            if (channel != null) {
+                kill_by_channel.set(channel, function() {
+                    if (!closed && !killed) {
+                        killed = true;
+                        kill_by_channel.remove(channel);
+                        proc.kill();
+                    }
+                });
+            }
 
             proc.stdout.on('data', function(data) {
                 var s = Std.string(data);
@@ -63,6 +94,7 @@ class Exec {
             });
 
             proc.on('close', function(code) {
+                closed = true;
                 resolve({
                     out: total_out,
                     err: total_err,
@@ -124,7 +156,7 @@ class Exec {
     				quoteType = c;
     			}
     		}
-    		else{
+    		else {
     			if (quoted != null) {
     				quoted += c;
     			}
