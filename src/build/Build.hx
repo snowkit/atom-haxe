@@ -2,6 +2,8 @@ package build;
 
 import plugin.Plugin.state;
 
+import utils.Log;
+
 class Build {
 
     public static function run_build():Void {
@@ -11,6 +13,10 @@ class Build {
             if (state.builder != null) {
                 state.builder.build();
             }
+
+        } else {
+
+            Log.warn('Unable to build because state is invalid');
 
         }
 

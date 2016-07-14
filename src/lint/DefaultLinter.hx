@@ -74,7 +74,20 @@ class DefaultLinter {
 
         args = state.as_args(args);
 
-        Run.haxe(args).then(function(result:ExecResult) {
+        var run:Promise<ExecResult>;
+
+        if (state.consumer.lint_command != null) {
+                // Custom command
+            var command = Exec.parse_command_line(state.consumer.lint_command);
+            run = Exec.run(command.cmd, command.args);
+        }
+        else {
+                // Default command
+            var args = state.as_args();
+            run = Run.haxe(args);
+        }
+
+        run.then(function(result:ExecResult) {
 
             if (result.err.length > 0) {
                 compiler_errors = Haxe.parse_compiler_output(result.err, {cwd: state.hxml.cwd});

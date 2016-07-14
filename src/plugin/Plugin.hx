@@ -58,7 +58,7 @@ typedef Consumer = {
 
     /** Custom haxe builder (provided by a consumer) */
 typedef Builder = {
-    
+
         /** Run build */
     function build():Void;
 }
@@ -202,21 +202,39 @@ class Plugin {
         atom.contextMenu.add(untyped {
             ".tree-view .file": [
                 { type: 'separator' },
-                { label: 'Set as active HXML file', command: 'haxe:set-hxml-file', shouldDisplay: should_display_context_tree },
+                { label: 'Set as active HXML file', command: 'haxe:set-hxml-file', shouldDisplay: should_display_set_hxml_context_tree },
+                { type: 'separator' }
+            ]
+        });
+
+        atom.contextMenu.add(untyped {
+            ".tree-view .file": [
+                { type: 'separator' },
+                { label: 'Set as active Haxe project file', command: 'haxe:set-haxe-project-file', shouldDisplay: should_display_set_haxe_project_context_tree },
                 { type: 'separator' }
             ]
         });
 
     } //init_menus
 
-    private static function should_display_context_tree(event:js.html.Event):Bool {
+    private static function should_display_set_hxml_context_tree(event:js.html.Event):Bool {
 
         var key = '.hxml';
         var val:String = untyped event.target.innerText;
         if (val == null) return false;
         return val.endsWith(key);
 
-    } //should_display_context_tree
+    } //should_display_set_hxml_context_tree
+
+    private static function should_display_set_haxe_project_context_tree(event:js.html.Event):Bool {
+
+        untyped console;
+        var key = '.json';
+        var val:String = untyped event.target.innerText;
+        if (val == null) return false;
+        return val.endsWith(key);
+
+    } //should_display_set_haxe_project_context_tree
 
 /// Server
 
@@ -238,6 +256,8 @@ class Plugin {
         Log.debug("Init commands");
 
         register_command('set-hxml-file', set_hxml_file_from_treeview);
+
+        register_command('set-haxe-project-file', set_haxe_project_from_treeview);
 
         register_command('build', build);
 
@@ -272,9 +292,36 @@ class Plugin {
             }
         };
 
-        Log.success("Active HXML file set to " + state.hxml.file, {display: true, clear: true});
+        Log.success("Active HXML file set to " + file_path, {display: true, clear: true});
 
     } //set_hxml_file_from_treeview
+
+    private static function set_haxe_project_from_treeview(_) {
+
+        var treeview = atom.packages.getLoadedPackage('tree-view');
+        if (treeview == null) {
+            Log.error("Cannot set an active Haxe project file from tree-view because the tree-view package is disabled.");
+            return;
+        }
+
+        treeview = require(treeview.mainModulePath);
+
+        var package_obj = treeview.serialize();
+        var file_path = package_obj.selectedPath;
+
+        var consumer = new HaxeProjectConsumer(file_path);
+        consumer.load().then(function(result) {
+                // Assign a haxe project consumer
+            state.consumer = cast consumer;
+
+            Log.success("Active Haxe project file set to " + file_path, {display: true, clear: true});
+
+        }).catchError(function(error) {
+
+            Log.error("Failed to set Haxe project file: " + error, {display: true, clear: true});
+        });
+
+    } //set_haxe_project_from_treeview
 
     private static function build():Void {
 

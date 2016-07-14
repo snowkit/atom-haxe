@@ -38,16 +38,16 @@ class HaxeProjectConsumer {
         this.project_file = project_file;
         cwd = Path.directory(project_file);
 
-        options = Json.parse(File.getContent(project_file));
-
-        build_command = options.commands.build;
-        lint_command = options.commands.lint;
-
     } //new
 
     public function load():Promise<HaxeProjectConsumer> {
 
         return new Promise<HaxeProjectConsumer>(function(resolve, reject) {
+
+            options = Reflect.field(Json.parse(File.getContent(project_file)), 'haxe-project');
+
+            build_command = options.commands.build;
+            lint_command = options.commands.lint;
 
                 // Get hxml data
             var command = Exec.parse_command_line(options.commands.hxml);

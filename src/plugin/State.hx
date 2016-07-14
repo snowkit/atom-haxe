@@ -3,6 +3,7 @@ package plugin;
 import js.node.Path;
 
 import plugin.Plugin;
+import plugin.consumer.HaxeProjectConsumer;
 import build.DefaultBuilder;
 import lint.DefaultLinter;
 import utils.Log;
@@ -49,6 +50,10 @@ class State {
                 name: consumer.name,
                 hxml: consumer.hxml
             };
+                // Keep haxe project file path, if any
+            if (consumer.name == 'project') {
+                values.consumer.project_file = untyped consumer.project_file;
+            }
         }
         return values;
 
@@ -57,10 +62,27 @@ class State {
         /** Unserialize */
     public function unserialize(values:Dynamic):Void {
             // Update all values on the target state (this)
-        if (values.consumer != null && values.consumer.name == 'default') {
+        if (values.consumer != null) {
                 // Reset consumer to default if it was using it before serialization
-            consumer = values.consumer;
-            Log.success("Active HXML file restored to " + consumer.hxml.file, {display: true});
+            if (values.consumer.name == 'default') {
+                consumer = values.consumer;
+                Log.success("Active HXML file restored to " + consumer.hxml.file, {display: true});
+            }
+                // Restore haxe project consumer if any
+            else if (values.consumer.name == 'project') {
+                var file_path = values.consumer.project_file;
+                var project_consumer = new HaxeProjectConsumer(file_path);
+                project_consumer.load().then(function(result) {
+                        // Assign a haxe project consumer
+                    consumer = cast project_consumer;
+
+                    Log.success("Active Haxe project file restored to " + file_path, {display: true, clear: true});
+
+                }).catchError(function(error) {
+
+                    Log.error("Failed to restore Haxe project file: " + error, {display: true, clear: true});
+                });
+            }
         }
 
     } //unserialize
@@ -139,7 +161,7 @@ class State {
         var args = [];
 
             // Check if hxml content is set
-        if (hxml.content != null) {
+        if (hxml.content == null) {
                 // If not, check if there's a file given instead
             if (hxml.file != null) {
                     // If there is, make it relative
