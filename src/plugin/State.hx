@@ -7,6 +7,7 @@ import plugin.consumer.HaxeProjectConsumer;
 import build.DefaultBuilder;
 import lint.DefaultLinter;
 import utils.Log;
+import plugin.ui.StatusBar;
 
 import atom.Atom.atom;
 
@@ -91,7 +92,11 @@ class State {
 
     private function set_consumer(consumer:Consumer):Consumer {
 
-        return this.consumer = consumer;
+        this.consumer = consumer;
+
+        StatusBar.update();
+
+        return consumer;
 
     } //set_consumer
 

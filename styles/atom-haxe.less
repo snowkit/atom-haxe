@@ -102,6 +102,16 @@ atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="sou
     }
 }
 
+status-bar.status-bar #status-bar-haxe {
+    color: fade(@syntax-text-color, 90%);
+    background-color: fade(@text-color, 20%);
+    padding: 3px 6px;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
+
 // Fixing up truncated right label
 atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
     atom-overlay.autocomplete-plus autocomplete-suggestion-list.autocomplete-suggestion-list .right-label {

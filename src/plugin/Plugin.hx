@@ -23,6 +23,8 @@ import js.Node.require;
 import js.node.Path;
 import js.node.Fs;
 
+import plugin.ui.StatusBar;
+
 import lint.Lint;
 
 import plugin.consumer.HaxeProjectConsumer;
@@ -118,7 +120,8 @@ class Plugin {
         check_dependencies().then(function(_) {
                 // Init state
             state = new State(serialized_state);
-                // Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
+                // Events subscribed to in atom's system can
+                // be easily cleaned up with a CompositeDisposable
             subscriptions = new CompositeDisposable();
 
             init_server();
@@ -390,6 +393,14 @@ class Plugin {
     } //get_autocomplete_provider
 
 /// Consumed services
+
+    @:allow(AtomHaxe)
+    private static function consume_status_bar(status_bar:Dynamic):Void {
+
+        StatusBar.atom_status_bar = status_bar;
+        StatusBar.update();
+
+    } //consume_status_bar
 
     private static function get_haxe_service():HaxeService {
 

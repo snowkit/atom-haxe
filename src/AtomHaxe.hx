@@ -5,9 +5,6 @@ import service.HaxeService;
 
 import plugin.Plugin;
 
-// TODO implement toolbar service
-// TODO implement build service
-
     /** Public API exposed to Atom. */
 class AtomHaxe {
 
@@ -40,6 +37,8 @@ class AtomHaxe {
 /// Consumed services
 
     public static function consumeStatusBar(statusBar:Dynamic):Void {
+
+        Plugin.consume_status_bar(statusBar);
 
     } //consumeStatusBar
 
