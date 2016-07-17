@@ -23,6 +23,8 @@ class HaxeProjectConsumer {
 
     public var hxml:HXMLInfo;
 
+    public var selected_target:HaxeProjectTarget;
+
     public var build_command:String;
 
     public var lint_command:String;
@@ -42,15 +44,29 @@ class HaxeProjectConsumer {
 
     public function load():Promise<HaxeProjectConsumer> {
 
+        options = Reflect.field(Json.parse(File.getContent(project_file)), 'haxe-project');
+
+            // Sanitize
+        for (target in options.targets) {
+            if (target.commands == null) target.commands = {};
+        }
+
+        var target = options.targets[0];
+        return set_target(target);
+
+    } //load
+
+    public function set_target(target:HaxeProjectTarget):Promise<HaxeProjectConsumer> {
+
+        selected_target = target;
+
         return new Promise<HaxeProjectConsumer>(function(resolve, reject) {
 
-            options = Reflect.field(Json.parse(File.getContent(project_file)), 'haxe-project');
-
-            build_command = options.commands.build;
-            lint_command = options.commands.lint;
+            build_command = selected_target.commands.build;
+            lint_command = selected_target.commands.lint;
 
                 // Get hxml data
-            var command = Exec.parse_command_line(options.commands.hxml);
+            var command = Exec.parse_command_line(selected_target.commands.hxml);
             Exec.run(command.cmd, command.args, {cwd: cwd}).then(function(result:ExecResult) {
 
                 hxml = {
@@ -68,13 +84,26 @@ class HaxeProjectConsumer {
 
         }); //Promise
 
-    } //load
+    } //set_target
 
 }
 
 typedef HaxeProjectOptions = {
 
-        /** Project commands */
+        /** Project name */
+    @:optional var name:String;
+
+        /** Project targets */
+    @:optional var targets:Array<HaxeProjectTarget>;
+
+}
+
+typedef HaxeProjectTarget = {
+
+        /** Target name */
+    @:optional var name:String;
+
+        /** Target commands */
     @:optional var commands:HaxeProjectCommands;
 
 }
