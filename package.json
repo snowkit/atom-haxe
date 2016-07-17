@@ -34,10 +34,7 @@
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
-    "xml2js": "~0.4.5",
-    "fs-extra": "~0.16.5",
-    "atom-message-panel": "~1.2.2",
-    "temporary": "~0.0.8",
-    "fuzzaldrin": "~2.1.0"
+    "atom-message-panel": "~1.2.7",
+    "atom-space-pen-views": "~2.2.0"
   }
 }
