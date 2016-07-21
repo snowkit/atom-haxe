@@ -54,6 +54,7 @@ class State {
                 // Keep haxe project file path, if any
             if (consumer.name == 'project') {
                 values.consumer.project_file = untyped consumer.project_file;
+                values.consumer.target_name = untyped consumer.target_name;
             }
         }
         return values;
@@ -72,7 +73,7 @@ class State {
                 // Restore haxe project consumer if any
             else if (values.consumer.name == 'project') {
                 var file_path = values.consumer.project_file;
-                var project_consumer = new HaxeProjectConsumer(file_path);
+                var project_consumer = new HaxeProjectConsumer(file_path, values.consumer.target_name);
                 project_consumer.load().then(function(result) {
                         // Assign a haxe project consumer
                     consumer = cast project_consumer;

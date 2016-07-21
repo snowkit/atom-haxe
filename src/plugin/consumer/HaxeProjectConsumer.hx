@@ -31,13 +31,16 @@ class HaxeProjectConsumer {
 
     public var project_file:String;
 
+    public var target_name:String;
+
     public var cwd:String;
 
     public var options:HaxeProjectOptions;
 
-    public function new(project_file:String) {
+    public function new(project_file:String, ?target_name:String) {
 
         this.project_file = project_file;
+        this.target_name = target_name;
         cwd = Path.directory(project_file);
 
     } //new
@@ -51,7 +54,19 @@ class HaxeProjectConsumer {
             if (target.commands == null) target.commands = {};
         }
 
-        var target = options.targets[0];
+            // Select previous or first target
+        var target = null;
+        if (target_name != null) {
+            for (t in options.targets) {
+                if (target_name == t.name) {
+                    target = t;
+                    break;
+                }
+            }
+        }
+        if (target == null) {
+            target = options.targets[0];
+        }
         return set_target(target);
 
     } //load
@@ -59,6 +74,7 @@ class HaxeProjectConsumer {
     public function set_target(target:HaxeProjectTarget):Promise<HaxeProjectConsumer> {
 
         selected_target = target;
+        target_name = target.name;
 
         return new Promise<HaxeProjectConsumer>(function(resolve, reject) {
 
