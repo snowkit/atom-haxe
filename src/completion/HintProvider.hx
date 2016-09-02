@@ -75,6 +75,7 @@ class HintProvider {
             }).catchError(function(error) {
 
                 Log.warn(error);
+                html = null;
 
             }); //fetch
         }
