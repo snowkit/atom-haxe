@@ -8,7 +8,7 @@ class Build {
 
     public static function run_build():Void {
 
-        if (state.is_valid()) {
+        if (state != null && state.is_valid()) {
 
             if (state.builder != null) {
                 state.builder.build();

@@ -12,7 +12,7 @@ class Lint {
 
     public static function lint_project(editor:TextEditor):Promise<Dynamic> {
 
-        if (state.is_valid()) {
+        if (state != null && state.is_valid()) {
 
             if (state.linter != null) {
 
