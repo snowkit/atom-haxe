@@ -12,6 +12,7 @@ typedef ExecResult = {
     var out: String;
     var err: String;
     var code: Int;
+    var killed: Bool;
 }
 
 typedef ExecOptions = {
@@ -76,7 +77,9 @@ class Exec {
                     if (!closed && !killed) {
                         killed = true;
                         kill_by_channel.remove(channel);
-                        proc.kill();
+                        //proc.kill();
+                        var pid = proc.pid;
+                        untyped require('tree-kill')(pid);
                     }
                 });
             }
@@ -98,7 +101,8 @@ class Exec {
                 resolve({
                     out: total_out,
                     err: total_err,
-                    code: code
+                    code: code,
+                    killed: killed
                 });
             });
         });
@@ -160,7 +164,7 @@ class Exec {
     			if (quoted != null) {
     				quoted += c;
     			}
-    			else{
+    			else {
     				if (current != null) {
     					current += c;
     				}

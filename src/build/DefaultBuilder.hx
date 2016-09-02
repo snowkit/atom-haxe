@@ -35,12 +35,16 @@ class DefaultBuilder {
         }
 
         build.then(function(res:ExecResult) {
-            if (res.code != 0) {
-                atom.notifications.addWarning('Haxe: Build failed. Check log.', {});
-                Log.error('Build failed', {display: true});
+            if (!res.killed) {
+                if (res.code != 0) {
+                    atom.notifications.addWarning('Haxe: Build failed. Check log.', {});
+                    Log.error('Build failed', {display: true});
+                } else {
+                    atom.notifications.addSuccess('Haxe: Build succeeded', {});
+                    Log.success('Build succeeded', {display: true});
+                }
             } else {
-                atom.notifications.addSuccess('Haxe: Build succeeded', {});
-                Log.success('Build succeeded', {display: true});
+                Log.info('Stopped previous build', {display: true});
             }
         });
 
