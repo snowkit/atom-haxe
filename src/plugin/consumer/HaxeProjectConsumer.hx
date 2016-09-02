@@ -47,7 +47,14 @@ class HaxeProjectConsumer {
 
     public function load():Promise<HaxeProjectConsumer> {
 
-        options = Reflect.field(Json.parse(File.getContent(project_file)), 'haxe-project');
+        try {
+            options = Reflect.field(Json.parse(File.getContent(project_file)), 'haxe-project');
+        }
+        catch (e:Dynamic) {
+            return new Promise<HaxeProjectConsumer>(function(resolve, reject) {
+                reject(''+e);
+            });
+        }
 
             // Sanitize
         for (target in options.targets) {
