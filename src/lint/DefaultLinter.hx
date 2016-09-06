@@ -79,7 +79,7 @@ class DefaultLinter {
         if (state.consumer.lint_command != null) {
                 // Custom command
             var command = Exec.parse_command_line(state.consumer.lint_command);
-            run = Exec.run(command.cmd, command.args, {cwd: state.hxml.cwd});
+            run = Exec.run(command.cmd, command.args, {cwd: state.consumer.cwd});
         }
         else {
                 // Default command

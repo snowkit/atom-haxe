@@ -40,6 +40,9 @@ typedef Consumer = {
         /** The contextual hxml info */
     var hxml:HXMLInfo;
 
+        /** The consumer cwd. Not necessarily the same as hxml.cwd */
+    var cwd:String;
+
         /** The builder, if this consumer does build */
     @:optional var builder:Builder;
 
@@ -288,6 +291,7 @@ class Plugin {
             // Assign a default hxml provider
         state.consumer = {
             name: 'default',
+            cwd: Path.dirname(file_path),
             hxml: {
                 cwd: Path.dirname(file_path),
                 content: '' + Fs.readFileSync(file_path),

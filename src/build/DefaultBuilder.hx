@@ -24,7 +24,7 @@ class DefaultBuilder {
         if (state.consumer.build_command != null) {
                 // Custom build command
             var command = Exec.parse_command_line(state.consumer.build_command);
-            build = Exec.run(command.cmd, command.args, {cwd: state.hxml.cwd, channel: 'build-project'}, onout, onerr);
+            build = Exec.run(command.cmd, command.args, {cwd: state.consumer.cwd, channel: 'build-project'}, onout, onerr);
             Log.debug(command.cmd + ' ' + command.args.join(' '));
         }
         else {

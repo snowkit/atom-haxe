@@ -10,6 +10,8 @@ import utils.Exec;
 
 import tides.parse.HXML;
 
+using StringTools;
+
 import plugin.Plugin.HXMLInfo;
 
     /** Experimental: generic haxe project consumer.
@@ -97,13 +99,30 @@ class HaxeProjectConsumer {
                     cwd: cwd
                 };
 
-                resolve(this);
+                if (selected_target.commands.cwd != null) {
+                    var command = Exec.parse_command_line(selected_target.commands.cwd);
+                    Exec.run(command.cmd, command.args, {cwd: cwd}).then(function(result:ExecResult) {
+
+                        hxml.cwd = result.out.trim();
+
+                        resolve(this);
+
+                    }).catchError(function(error) {
+
+                        reject(error);
+
+                    }); //Exec cwd
+                }
+                else {
+
+                    resolve(this);
+                }
 
             }).catchError(function(error) {
 
                 reject(error);
 
-            }); //Exec
+            }); //Exec hxml
 
         }); //Promise
 
@@ -132,6 +151,9 @@ typedef HaxeProjectTarget = {
 }
 
 typedef HaxeProjectCommands = {
+
+        /** Command to get hxml cwd. Defaults to project file dir if null. */
+    @:optional var cwd:String;
 
         /** Command to be executed on build */
     @:optional var build:String;
