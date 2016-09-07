@@ -45,24 +45,15 @@ atom-overlay {
 // Hint
 atom-text-editor[data-grammar="source haxe"], atom-text-editor[data-grammar="source hx"] {
 
-    atom-overlay.haxe-hint-container {
-        z-index: 999; // To make it above autocomplete-plus suggestions
-    }
-
     atom-overlay.haxe-hint-container .haxe-hint {
         @haxe-hint-spacing: 4px;
         @haxe-hint-inline-link: fade(@base-background-color, 66%);
         @haxe-hint-inline-fg: @syntax-text-color;
         @haxe-hint-inline-bg: @base-background-color;
-        position: relative;
-        left: 0;
-        top: -4.6em;
-        white-space: nowrap;
         background: @haxe-hint-inline-bg;
         color: fade(@haxe-hint-inline-fg, 60%);
         box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
         font-size: 0.7em;
-        //padding: 0 @haxe-hint-spacing;
 
         transition: opacity 300ms;
         &.transparent {
