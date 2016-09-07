@@ -83,6 +83,23 @@ class HintContext {
             default:
         }
 
+            // Make the hints less agressive, only display
+            // them after ( and , for call arguments
+            // and : after structure key values
+        if (hint_kind != NONE) {
+            var trimmedPrefix = text.substr(completion_index).trim();
+            if (hint_kind == CALL_ARGUMENTS) {
+                if (trimmedPrefix != '' && !trimmedPrefix.endsWith(',')) {
+                    hint_kind = NONE;
+                }
+            }
+            else if (hint_kind == STRUCTURE_KEY_VALUE) {
+                if (!trimmedPrefix.endsWith(':')) {
+                    hint_kind = NONE;
+                }
+            }
+        }
+
             // TODO remove/move node.js dependency
         completion_byte = utils.Bytes.string_length(file_content.substr(0, completion_index));
 
