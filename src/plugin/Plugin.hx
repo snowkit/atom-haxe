@@ -15,6 +15,8 @@ import utils.TemporaryFile;
 
 import server.HaxeServer;
 
+import commands.GoToDeclaration;
+
 import completion.Query;
 import completion.SuggestionsProvider;
 import completion.HintProvider;
@@ -267,6 +269,8 @@ class Plugin {
 
         register_command('build', build);
 
+        register_command('go-to-declaration', go_to_declaration, 'symbols-view');
+
     } //init_commands
 
     private static function register_command(name:String, command:Dynamic, module:String = 'haxe'):Void {
@@ -333,6 +337,12 @@ class Plugin {
     private static function build():Void {
 
         Build.run_build();
+
+    } //build
+
+    private static function go_to_declaration():Void {
+trace('GO TO DECLARATION');
+        new GoToDeclaration().run();
 
     } //build
 
