@@ -5,7 +5,7 @@ import utils.Promise;
 import utils.HTML;
 
 import completion.Query;
-import completion.SuggestionsContext;
+import completion.SuggestionsFetcher;
 
 import atom.TextEditor;
 import atom.Range;
@@ -65,7 +65,7 @@ typedef AutocompletePlusSuggestion = {
         Depends on atom. */
 class SuggestionsProvider {
 
-    var context:SuggestionsContext = null;
+    var fetcher:SuggestionsFetcher = null;
 
     public function new() {
 
@@ -82,26 +82,26 @@ class SuggestionsProvider {
             var text = options.editor.getText();
             var index = text_before_cursor.length;
 
-            var previous_context = context;
-            context = new SuggestionsContext({
+            var previous_fetcher = fetcher;
+            fetcher = new SuggestionsFetcher({
                 file_path: options.editor.getBuffer().file.path,
                 file_content: text,
                 cursor_index: index
             });
 
-            context.fetch(previous_context).then(function(context:SuggestionsContext) {
+            fetcher.fetch(previous_fetcher).then(function(fetcher:SuggestionsFetcher) {
 
                 if (options.activatedManually ||
-                    context.position_info.dot_start != null ||
-                    context.position_info.identifier_start != null ||
-                    context.position_info.brace_start != null) {
+                    fetcher.position_info.dot_start != null ||
+                    fetcher.position_info.identifier_start != null ||
+                    fetcher.position_info.brace_start != null) {
 
-                    Log.success('Suggestions: ' + context.filtered_suggestions.length);
-                    resolve(convert_suggestions(context));
+                    Log.success('Suggestions: ' + fetcher.filtered_suggestions.length);
+                    resolve(convert_suggestions(fetcher));
                 }
                 else {
 
-                    Log.debug('Valid context but better not to display it yet');
+                    Log.debug('Valid fetcher but better not to display it yet');
                     resolve([]);
                 }
 
@@ -117,19 +117,19 @@ class SuggestionsProvider {
 
     } //get_suggestions
 
-        /** Get autocomplete-plus suggestions from completion context's suggestions */
-    function convert_suggestions(context:SuggestionsContext):Array<AutocompletePlusSuggestion> {
+        /** Get autocomplete-plus suggestions from completion fetcher's suggestions */
+    function convert_suggestions(fetcher:SuggestionsFetcher):Array<AutocompletePlusSuggestion> {
 
         var suggestions:Array<AutocompletePlusSuggestion> = [];
 
-        for (item in context.filtered_suggestions) {
+        for (item in fetcher.filtered_suggestions) {
 
             var suggestion:AutocompletePlusSuggestion = {};
 
             suggestion.text = item.text;
             suggestion.snippet = item.snippet;
             suggestion.displayText = item.display_text;
-            suggestion.replacementPrefix = context.prefix;
+            suggestion.replacementPrefix = fetcher.prefix;
 
             if (item.kind == 'static') {
                 suggestion.type = 'property';

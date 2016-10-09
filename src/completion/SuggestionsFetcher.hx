@@ -10,9 +10,9 @@ import utils.Promise;
 import utils.Fuzzaldrin;
 import utils.Log;
 
-    /** Current suggestions context from file contents and position.
+    /** Current suggestions fetcher from file contents and position.
         TODO Move to tides eventually? */
-class SuggestionsContext {
+class SuggestionsFetcher {
 
 /// Initial info
 
@@ -42,11 +42,11 @@ class SuggestionsContext {
 
     public var status:SuggestionsStatus = NONE;
 
-    var fetch_promise:Promise<SuggestionsContext> = null;
+    var fetch_promise:Promise<SuggestionsFetcher> = null;
 
     var fetch_reject:String->Void = null;
 
-    public function new(options:SuggestionsContextOptions) {
+    public function new(options:SuggestionsFetcherOptions) {
 
         file_path = options.file_path;
         file_content = options.file_content;
@@ -130,26 +130,26 @@ class SuggestionsContext {
         /** Fetch completion data and return a promise. If data is already
             fetched/fetching, returns the related promise instead of fetching
             a second time. */
-    public function fetch(?previous_context:SuggestionsContext):Promise<SuggestionsContext> {
+    public function fetch(?previous_fetcher:SuggestionsFetcher):Promise<SuggestionsFetcher> {
 
             // Create fetch promise
         if (fetch_promise == null) {
 
             status = FETCHING;
 
-                // Check that we don't just need the same information as previous context
-            if (can_use_previous_context(previous_context)) {
+                // Check that we don't just need the same information as previous fetcher
+            if (can_use_previous_fetcher(previous_fetcher)) {
                     // If so, fetch info from it
-                fetch_promise = fetch_from_previous_context(previous_context);
+                fetch_promise = fetch_from_previous_fetcher(previous_fetcher);
             }
             else {
-                    // Cancel previous context fetching if needed
-                if (previous_context != null && previous_context.status == FETCHING) {
-                    previous_context.cancel_fetch();
+                    // Cancel previous fetcher fetching if needed
+                if (previous_fetcher != null && previous_fetcher.status == FETCHING) {
+                    previous_fetcher.cancel_fetch();
                 }
 
                     // Otherwise perform "fresh" fetch
-                fetch_promise = new Promise<SuggestionsContext>(function(resolve, reject) {
+                fetch_promise = new Promise<SuggestionsFetcher>(function(resolve, reject) {
 
                     if (status == CANCELED) {
                         reject("Fetch was canceled");
@@ -207,7 +207,7 @@ class SuggestionsContext {
 
                             // TODO log server error, when
                             // completion debug is enabled
-                            //Log.error(error);
+                            Log.error(error);
 
                                 // At fetch result/error
                             if (status != CANCELED) {
@@ -217,7 +217,7 @@ class SuggestionsContext {
 
                         });
 
-                    }, 0); // Explicit delay to ensure the order of context completion/cancelation
+                    }, 0); // Explicit delay to ensure the order of fetcher completion/cancelation
 
                 }); //Promise
             }
@@ -228,17 +228,17 @@ class SuggestionsContext {
 
     } //fetch
 
-    public function can_use_previous_context(previous_context:SuggestionsContext):Bool {
+    public function can_use_previous_fetcher(previous_fetcher:SuggestionsFetcher):Bool {
 
-        return previous_context != null
-            && previous_context.completion_index == completion_index
-            && previous_context.suggestions_kind == suggestions_kind;
+        return previous_fetcher != null
+            && previous_fetcher.completion_index == completion_index
+            && previous_fetcher.suggestions_kind == suggestions_kind;
 
-    } //can_use_previous_context
+    } //can_use_previous_fetcher
 
-    function fetch_from_previous_context(previous_context:SuggestionsContext):Promise<SuggestionsContext> {
+    function fetch_from_previous_fetcher(previous_fetcher:SuggestionsFetcher):Promise<SuggestionsFetcher> {
 
-        return new Promise<SuggestionsContext>(function(resolve, reject) {
+        return new Promise<SuggestionsFetcher>(function(resolve, reject) {
 
             if (status == CANCELED) {
                 reject("Fetch was canceled");
@@ -247,17 +247,17 @@ class SuggestionsContext {
 
             fetch_reject = reject;
 
-            previous_context.fetch().then(function(previous_context) {
+            previous_fetcher.fetch().then(function(previous_fetcher) {
 
                     // At fetch result
                 if (status != CANCELED) {
 
                     status = FETCHED;
 
-                    suggestions = previous_context.suggestions;
+                    suggestions = previous_fetcher.suggestions;
 
-                    if (previous_context.prefix == prefix) {
-                        filtered_suggestions = previous_context.filtered_suggestions;
+                    if (previous_fetcher.prefix == prefix) {
+                        filtered_suggestions = previous_fetcher.filtered_suggestions;
                     } else {
                         compute_filtered_suggestions();
                     }
@@ -277,7 +277,7 @@ class SuggestionsContext {
 
         }); //Promise
 
-    } //fetch_from_previous_context
+    } //fetch_from_previous_fetcher
 
     function cancel_fetch():Void {
 
@@ -453,7 +453,7 @@ class SuggestionsContext {
 
 }
 
-typedef SuggestionsContextOptions = {
+typedef SuggestionsFetcherOptions = {
 
     var file_path:String;
 
@@ -461,7 +461,7 @@ typedef SuggestionsContextOptions = {
 
     var cursor_index:Int;
 
-} //SuggestionsContextOptions
+} //SuggestionsFetcherOptions
 
     /** Every possible kinds of completion. This enum doesn't
         necessarily reflect what is possible with haxe compiler/server queries.

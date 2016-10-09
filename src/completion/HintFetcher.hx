@@ -10,9 +10,9 @@ import utils.Log;
 
 using StringTools;
 
-    /** Current (type) hint context from file contents and position.
+    /** Current (type) hint fetcher from file contents and position.
         TODO Move to tides eventually? */
-class HintContext {
+class HintFetcher {
 
 /// Initial info
 
@@ -40,11 +40,11 @@ class HintContext {
 
     public var status:HintStatus = NONE;
 
-    var fetch_promise:Promise<HintContext> = null;
+    var fetch_promise:Promise<HintFetcher> = null;
 
     var fetch_reject:String->Void = null;
 
-    public function new(options:HintContextOptions) {
+    public function new(options:HintFetcherOptions) {
 
         file_path = options.file_path;
         file_content = options.file_content;
@@ -107,26 +107,26 @@ class HintContext {
 
 /// Query fetching
 
-    public function fetch(?previous_context:HintContext):Promise<HintContext> {
+    public function fetch(?previous_fetcher:HintFetcher):Promise<HintFetcher> {
 
             // Create fetch promise
         if (fetch_promise == null) {
 
             status = FETCHING;
 
-                // Check that we don't just need the same information as previous context
-            if (can_use_previous_context(previous_context)) {
+                // Check that we don't just need the same information as previous fetcher
+            if (can_use_previous_fetcher(previous_fetcher)) {
                     // If so, fetch info from it
-                fetch_promise = fetch_from_previous_context(previous_context);
+                fetch_promise = fetch_from_previous_fetcher(previous_fetcher);
             }
             else {
-                    // Cancel previous context fetching if needed
-                if (previous_context != null && previous_context.status == FETCHING) {
-                    previous_context.cancel_fetch();
+                    // Cancel previous fetcher fetching if needed
+                if (previous_fetcher != null && previous_fetcher.status == FETCHING) {
+                    previous_fetcher.cancel_fetch();
                 }
 
                     // Otherwise perform "fresh" fetch
-                fetch_promise = new Promise<HintContext>(function(resolve, reject) {
+                fetch_promise = new Promise<HintFetcher>(function(resolve, reject) {
 
                     if (status == CANCELED) {
                         reject("Fetch was canceled");
@@ -184,7 +184,7 @@ class HintContext {
 
                                 // TODO log server error, when
                                 // hint debug is enabled
-                                //Log.error(error);
+                                Log.error(error);
 
                                     // At fetch result/error
                                 if (status != CANCELED) {
@@ -202,7 +202,7 @@ class HintContext {
                             }
                         }
 
-                    }, 0); // Explicit delay to ensure the order of context completion/cancelation
+                    }, 0); // Explicit delay to ensure the order of fetcher completion/cancelation
 
                 }); //Promise
             }
@@ -212,18 +212,18 @@ class HintContext {
 
     } //fetch
 
-    public function can_use_previous_context(previous_context:HintContext):Bool {
+    public function can_use_previous_fetcher(previous_fetcher:HintFetcher):Bool {
 
-        return previous_context != null
-            && previous_context.completion_index == completion_index
-            && previous_context.hint_kind == hint_kind
+        return previous_fetcher != null
+            && previous_fetcher.completion_index == completion_index
+            && previous_fetcher.hint_kind == hint_kind
             ;
 
-    } //can_use_previous_context
+    } //can_use_previous_fetcher
 
-    function fetch_from_previous_context(previous_context:HintContext):Promise<HintContext> {
+    function fetch_from_previous_fetcher(previous_fetcher:HintFetcher):Promise<HintFetcher> {
 
-        return new Promise<HintContext>(function(resolve, reject) {
+        return new Promise<HintFetcher>(function(resolve, reject) {
 
             if (status == CANCELED) {
                 reject("Fetch was canceled");
@@ -232,14 +232,14 @@ class HintContext {
 
             fetch_reject = reject;
 
-            previous_context.fetch().then(function(previous_context) {
+            previous_fetcher.fetch().then(function(previous_fetcher) {
 
                     // At fetch result
                 if (status != CANCELED) {
 
                     status = FETCHED;
 
-                    type_query_result = previous_context.type_query_result;
+                    type_query_result = previous_fetcher.type_query_result;
 
                     compute_hint();
 
@@ -258,7 +258,7 @@ class HintContext {
 
         }); //Promise
 
-    } //fetch_from_previous_context
+    } //fetch_from_previous_fetcher
 
     function cancel_fetch():Void {
 
@@ -358,7 +358,7 @@ class HintContext {
 
 }
 
-typedef HintContextOptions = {
+typedef HintFetcherOptions = {
 
     var file_path:String;
 
@@ -366,7 +366,7 @@ typedef HintContextOptions = {
 
     var cursor_index:Int;
 
-} //SuggestionsContextOptions
+} //SuggestionsFetcherOptions
 
 enum HintKind {
     NONE;

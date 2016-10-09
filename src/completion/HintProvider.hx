@@ -15,7 +15,7 @@ import utils.Log;
         Depends on atom. */
 class HintProvider {
 
-    var context:HintContext = null;
+    var fetcher:HintFetcher = null;
 
     var view:DivElement;
 
@@ -54,20 +54,20 @@ class HintProvider {
             var text = editor.getText();
             var index = text_before_cursor.length;
 
-            var previous_context = context;
-            context = new HintContext({
+            var previous_fetcher = fetcher;
+            fetcher = new HintFetcher({
                 file_path: editor.getBuffer().file.path,
                 file_content: text,
                 cursor_index: index
             });
 
-            if (!context.can_use_previous_context(previous_context)) {
+            if (!fetcher.can_use_previous_fetcher(previous_fetcher)) {
                     // If we know the contextes are too different,
                     // Clear hint right away.
                 html = null;
             }
 
-            context.fetch(previous_context).then(function(context:HintContext) {
+            fetcher.fetch(previous_fetcher).then(function(context:HintFetcher) {
 
                 Log.success('Hint: ' + context.hint);
                 html = context.hint;
