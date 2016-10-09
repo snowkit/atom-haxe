@@ -10,6 +10,7 @@ import completion.SuggestionsFetcher;
 import atom.TextEditor;
 import atom.Range;
 import atom.Point;
+import atom.TextBuffer;
 
 import js.node.Buffer;
 
@@ -149,5 +150,35 @@ class SuggestionsProvider {
         return suggestions;
 
     } //convert_suggestions
+
+    public function did_insert_suggestion(options) {
+
+            // Get editor state
+        var editor:TextEditor = options.editor;
+        var position = options.triggerPosition;
+        var buffer_pos = editor.getLastCursor().getBufferPosition().toArray();
+        var suggestion = options.suggestion;
+
+            // When inserting a signature as snippet, remove the contents of the signature
+            // because it is usually annoying, especially with optional arguments.
+            // The type hinting should be enough to know what to type next
+            // And in case the developer really wants to restore the full snippet,
+            // ctrl/cmd + z shortcut will do this job
+        var range = new Range(new Point(position.row, position.column), buffer_pos);
+        var inserted_text:String = editor.getTextInBufferRange(range);
+        var sig_start = inserted_text.indexOf('(');
+        if (sig_start > -1) {
+            var following_text:String = editor.getTextInBufferRange(new Range(new Point(position.row, position.column), editor.getBuffer().getEndPosition().toArray()));
+            var sig_end = following_text.indexOf(')');
+            if (sig_end != -1) {
+                inserted_text = following_text.substring(sig_start + 1, sig_end);
+                editor.setTextInBufferRange(new Range(new Point(position.row, position.column+sig_start+1), new Point(position.row, position.column+sig_start+inserted_text.length+1)), '');
+
+                    // Ensure the cursor is inside the parenthesis
+                editor.setCursorBufferPosition(new Point(position.row, position.column+sig_start+1));
+            }
+        }
+
+    } //did_insert_suggestion
 
 } //AutocompleteProvider

@@ -391,6 +391,9 @@ class Plugin {
             excludeLowerPriority: false,
             getSuggestions: function(options) {
                 return autocomplete_provider.get_suggestions(options);
+            },
+            onDidInsertSuggestion: function(options) {
+                autocomplete_provider.did_insert_suggestion(options);
             }
         }
 
