@@ -37,6 +37,11 @@ typedef QueryOptions = {
     /** Query haxe server/compiler to get completion about the code */
 class Query {
 
+        // A registry of files that needs to be linked with '-cp'
+        // when running completion on them. That allows us to prevent adding
+        // useless '-cp' on files that don't need it.
+    static var cp_files:Map<String,Bool> = new Map<String,Bool>();
+
     public static function run(options:QueryOptions):Promise<QueryResult> {
 
         return new Promise<QueryResult>(function(resolve, reject) {
@@ -61,14 +66,9 @@ class Query {
 
             args = args.concat(hxml_args);
 
-                // TODO only do this when really needed
-                //      We could try without first, then if some
-                //      specific error "not in class path" try
-                //      again with the added -cp path
-
                 // Add -cp file's path because haxe compiler
                 // is a bit too picky on lib code if we don't
-            if (file != null) {
+            if (file != null && cp_files.exists(file)) {
                 args.push('-cp');
                 args.push(file.substr(0, file.lastIndexOf('/')));
             }
@@ -95,6 +95,19 @@ class Query {
                 resolve(new QueryResult(result));
 
             }).catchError(function(error) {
+
+                    // Kind of hacky, but when having this error, we can try again
+                    // to get completion for this file by adding a -cp entry in hxml
+                if (error == 'Error: Display file was not found in class path') {
+
+                    if (!cp_files.exists(file)) {
+
+                        cp_files.set(file, true);
+                        run(options).then(resolve).catchError(reject);
+
+                        return;
+                    }
+                }
 
                 reject(error);
 
