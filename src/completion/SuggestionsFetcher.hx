@@ -73,11 +73,16 @@ class SuggestionsFetcher {
 
             case FUNCTION_CALL:
                 if (position_info.brace_start != null) {
-                    completion_index = position_info.paren_start + 1;
                     if (position_info.partial_key != null) {
                         suggestions_kind = STRUCTURE_KEYS;
+                        completion_index = position_info.paren_start + 1;
                     } else {
-                        suggestions_kind = STRUCTURE_KEY_VALUE;
+                        suggestions_kind = TOP_LEVEL;
+                        if (position_info.identifier_start != null) {
+                            completion_index = position_info.identifier_start;
+                        } else {
+                            completion_index = cursor_index;
+                        }
                     }
 
                 } else {
@@ -91,11 +96,12 @@ class SuggestionsFetcher {
 
             case VARIABLE_ASSIGN:
                 if (position_info.brace_start != null) {
-                    completion_index = position_info.paren_start + 1;
                     if (position_info.partial_key != null) {
                         suggestions_kind = STRUCTURE_KEYS;
+                        completion_index = position_info.paren_start + 1;
                     } else {
-                        suggestions_kind = STRUCTURE_KEY_VALUE;
+                        suggestions_kind = TOP_LEVEL;
+                        completion_index = position_info.assign_start + 1;
                     }
 
                 } else {
