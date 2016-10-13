@@ -28,6 +28,7 @@ class HaxeServer {
     var buffer:MessageBuffer;
     var next_msg_len:Int = -1;
     var callbacks:Array<String->Void> = [];
+    var killed:Bool = false;
 
     public function new() {
 
@@ -83,11 +84,27 @@ class HaxeServer {
 
     } //start
 
+    public function kill():Void {
+
+        if (killed) return;
+        killed = true;
+
+        // Kill the process
+        var pid = proc.pid;
+        untyped require('tree-kill')(pid);
+
+    }
+
     static var stdin_sep_buf = new Buffer([1]);
 
     public function send(args:Array<String>, ?token:CancellationToken, ?stdin:String):Promise<String> {
 
         return new Promise<String>(function(resolve, reject) {
+
+            if (killed) {
+                reject("This haxe server was killed and doesn't accept input anymore.");
+                return;
+            }
 
             if (stdin != null) {
                 args.push('-D');
@@ -177,13 +194,6 @@ class HaxeServer {
     function on_exit(code:Int, message:String):Void {
 
         Log.debug('Haxe server was killed: ' + code + ', ' + message);
-        Log.debug('Restart it...');
-
-        start().then(function(result) {
-            Log.debug(result);
-        }).catchError(function(error) {
-            Log.error(error);
-        });
 
     } //on_exit
 

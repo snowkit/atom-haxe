@@ -113,7 +113,10 @@ class Plugin {
 
     public static var state(default,null):State = null;
 
-    public static var haxe_server(default,null):HaxeServer = null;
+    @:isVar public static var haxe_server(get,null):HaxeServer = null;
+    static function get_haxe_server():HaxeServer {
+        return haxe_server;
+    }
 
 
 /// Lifecycle
@@ -247,13 +250,35 @@ class Plugin {
 /// Server
 
     private static function init_server():Void {
-            // Init haxe server
-        haxe_server = new HaxeServer();
-        haxe_server.start().then(function(result) {
+
+        // Init haxe server
+        var new_server = new HaxeServer();
+        if (haxe_server == null) haxe_server = new_server;
+
+        new_server.start().then(function(result) {
             Log.debug(result);
+
+            if (haxe_server != new_server) {
+                var prev_server = haxe_server;
+                haxe_server = new_server;
+
+                // Kill previous server after giving it enough time to
+                // finish its work.
+                haxe.Timer.delay(function() {
+                    prev_server.kill();
+                }, 15000);
+            }
+
         }).catchError(function(error) {
             Log.error(error);
         });
+
+        // Restart server every 1 minute because it seems the number
+        // of sub-processes seems to increase forever otherwise,
+        // until we have odd bugs on the editor itself, and the server not
+        // responding anymore. This _sad_ workaround will ensure everything is
+        // "reset" every minute, will trying to keep things smooth.
+        haxe.Timer.delay(init_server, 60000);
 
     } //init_server
 
@@ -341,7 +366,7 @@ class Plugin {
     } //build
 
     private static function go_to_declaration():Void {
-trace('GO TO DECLARATION');
+
         new GoToDeclaration().run();
 
     } //build
