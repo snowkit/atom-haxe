@@ -5,6 +5,8 @@ atom.io haxe plugin, includes completion, building, error checking and more.
 Please note that this package is in active development, you're bound to find
 some rough edges and pain points. Issues, feedback and suggestions are welcome.
 
+A full rewrite in Haxe language is in progress on [haxe-rewrite](https://github.com/snowkit/atom-haxe/tree/haxe-rewrite) branch (only compatible with Haxe 3.3+).
+
 Thanks!
 
 ## Goals
