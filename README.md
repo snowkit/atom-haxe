@@ -28,7 +28,7 @@ Install these from atom Settings -> Install
 
 - requires `linter` package
 - requires `language-haxe` package
-- requires `autocomplete-plus` package
+- requires `autocomplete-plus` package (already included in Atom by default)
 
 ## Usage
 
