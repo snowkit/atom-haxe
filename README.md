@@ -4,13 +4,26 @@ atom.io haxe plugin, includes completion, building, error checking and more.
 
 ## Haxe rewrite branch
 
-This branch is a rewrite of the plugin into haxe language. It also leverage latest
-haxe compiler features to get better code completion.
+This branch is a rewrite of the plugin into haxe language. It leverage latest
+haxe compiler features to get better code completion. Haxe 3.3+ is required.
 
-Current code uses local haxelib repos based on git submodules.
-The haxe project should build fine if you install dependencies with:
+## How to use
 
-``git submodule update --init --recursive``
+You can use this development version on atom using git and apm:
+
+```
+# Clone repository and its submodules for the correct branch
+git clone https://github.com/snowkit/atom-haxe.git
+cd atom-haxe
+git checkout haxe-rewrite
+git submodule update --init --recursive
+
+# Install node/atom dependencies
+apm install
+
+# Link it with atom
+apm link .
+```
 
 ## Active development
 
