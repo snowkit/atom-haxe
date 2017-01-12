@@ -8,3 +8,4 @@ Tasks required to make haxe-rewrite ready to replace current atom-haxe master br
 [ ] Add a setting to allow/disable message panel auto-hide (could be a close delay set to 0 to disable)
 [ ] Add a setting to restart haxe server automatically every X seconds (0 to never restart)
 [ ] Add a command to restart haxe server manually
+[ ] Make the consumers (atom-flow) work with the slightly modifier consumer API
