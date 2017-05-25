@@ -24,7 +24,7 @@ this can be configured in the settings, but is not usually required.
 
 **Required Atom Packages**
 
-Install these from atom Settings -> Install
+Install these either from Atom -> Settings -> Install, or run `apm install [package-name]` on your CLI if you have atom shell commands installed.
 
 - requires `linter` package
 - requires `language-haxe` package
